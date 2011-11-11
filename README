@@ -1,0 +1,16 @@
+Little project aimed to help explo team exploring jbehave features
+
+Supported features :
+ - maven plugin
+ - spring integration
+ - stories implementation written in java
+ - tabular data injected @before test
+ - clean up @after test
+ - expectations expressed in tabulat form
+ - parameterized test
+
+Desired features
+ - stories editor w/ completion
+ - better tag/meta support at runtime
+
+
