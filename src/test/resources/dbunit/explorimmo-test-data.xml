@@ -1,0 +1,14 @@
+<dataset>
+	<advert advert_id="1" address_city="Paris" address_country_code="FR" address_postal_code="75009" address_street_address="12 rue du Hedler" description="Vous composez votre salade nous la réalisons" email="contact@tante-juliette.fr" halal="0" kosher="0" main_offer="Menu salade : Grande salade 4 ingrédients + Jus frais ou Grande salade 4 ingrédients + dessert maison 8,90€" name="Tante Juliette" phone_number="0145789632"/>
+	<advert advert_id="2" address_city="Paris" address_country_code="FR" address_postal_code="75009" address_street_address="12 rue Lafayette" description="venez découvrir nos compositions uniques de salade originales" email="contact@noon.fr" halal="0" kosher="0" main_offer="Salade quinoa 6,20€" name="Noon" phone_number="0143568532"/>
+
+	<food_specialty food_specialty_id="1" code="SDW" label="Sandwich" active="1"/>
+	<food_specialty food_specialty_id="2" code="SLD" label="Salade" active="1"/>
+	<food_specialty food_specialty_id="3" code="BLG" label="Boulangerie" active="1"/>
+	<food_specialty food_specialty_id="4" code="CHN" label="Chinois" active="1"/>
+	<food_specialty food_specialty_id="5" code="JPN" label="Japonais" active="1"/>
+	 	
+	<advert_food_specialty advert_id="1" food_specialty_id="1"/>
+	<advert_food_specialty advert_id="1" food_specialty_id="2"/>
+	<advert_food_specialty advert_id="2" food_specialty_id="2"/>
+</dataset>
