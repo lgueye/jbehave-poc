@@ -2,6 +2,7 @@ Search advert stories
 
 Meta:
 @refs 1
+@search
 
 Narrative:
 Given I provide a search advert request
@@ -24,7 +25,7 @@ Given adverts:
 When I search adverts by criteria:
 |name|description|address.streetAddress|address.city|address.postalCode|
 |name|description|street|city|postal|
-Then I get the adverts:
+Then I sould get the adverts:
 |name|description|address.streetAddress|address.city|address.postalCode|
 |name0|description0|streetAddress0|city0|postalCode0|
 |name1|description1|streetAddress1|city1|postalCode1|
