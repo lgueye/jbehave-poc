@@ -7,9 +7,11 @@ import java.net.URI;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
@@ -17,6 +19,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -38,8 +43,7 @@ public class AdvertController {
     @Context
     UriInfo uriInfo;
 
-    // private static final Logger LOGGER =
-    // LoggerFactory.getLogger(AdvertController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdvertController.class);
 
     @POST
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -50,6 +54,16 @@ public class AdvertController {
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(id)).build();
 
         return Response.created(uri).build();
+
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@PathParam(value = "id") final Long id) throws Throwable {
+
+        facade.deleteAdvert(id);
+
+        return Response.noContent().build();
 
     }
 
@@ -71,7 +85,13 @@ public class AdvertController {
         criteria.getAddress().setCountryCode(countryCode);
 
         final List<Advert> results = facade.findAdvertsByCriteria(criteria);
+
+        if (CollectionUtils.isEmpty(results)) {
+            LOGGER.info("No results found");
+        }
+
         final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {};
+
         return Response.ok(entity).build();
 
     }
