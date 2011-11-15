@@ -4,7 +4,12 @@
 package fr.explorimmo.poc.stories.steps;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.ws.rs.core.MediaType;
+
+import org.apache.http.HttpStatus;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Named;
 import org.jbehave.core.annotations.Then;
@@ -35,11 +40,9 @@ public class SearchAdvert {
     @Autowired
     @Qualifier("baseEndPoint")
     String baseEndPoint;
-    URI uri;
-    Advert body;
-    String requestContentType;
     ClientConfig cc;
     Client jerseyClient;
+    String responseContentType;
     ClientResponse response;
 
     public SearchAdvert() {
@@ -49,24 +52,56 @@ public class SearchAdvert {
         jerseyClient.addFilter(new LoggingFilter());
     }
 
-    @Given("adverts: $adverts")
-    public void authenticate(@Named("adverts") final ExamplesTable advertsAsTable) {
-
-    }
-
-    @Then("Then I sould get the adverts: adverts")
+    @Then("I sould get the adverts: $adverts")
     public void expectedResult(@Named("adverts") final ExamplesTable advertsAsTable) {
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getStatus());
-        final int statusCodeFirstDigit = Integer.valueOf(String.valueOf(response.getStatus()).substring(0, 1));
-        Assert.assertTrue(statusCodeFirstDigit != 2 && statusCodeFirstDigit != 3);
+        Assert.assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
     @When("I search adverts by criteria: $criteria")
     public void sendRequestWithCriteria(@Named("criteria") final ExamplesTable criteriaAsTable) {
-        uri = URI.create(baseEndPoint + "/advert/find");
+        final StringBuilder queryBuilder = new StringBuilder();
+        final Map<String, String> row = criteriaAsTable.getRows().get(0);// Table first and unique row
+        for (final Entry<String, String> entry : row.entrySet()) {
+            queryBuilder.append(entry.getKey() + "=" + entry.getValue() + "&");
+        }
+        final String path = "/advert/find";
+        final String query = queryBuilder.toString();
+        final URI uri = URI.create(baseEndPoint + path);
+        final String requestContentType = "application/x-www-form-urlencoded";
         final WebResource webResource = jerseyClient.resource(uri);
-        response = webResource.header("Content-Type", requestContentType).post(ClientResponse.class, body);
+        response = webResource.accept(MediaType.valueOf(responseContentType))
+                .header("Content-Type", requestContentType).post(ClientResponse.class, query);
+    }
+
+    @When("I receive <responseContentType>")
+    public void setResponseContentType(@Named("responseContentType") final String responseContentType) {
+        this.responseContentType = responseContentType;
+    }
+
+    @Given("adverts: $adverts")
+    public void setup(@Named("adverts") final ExamplesTable advertsAsTable) {
+        for (final Map<String, String> row : advertsAsTable.getRows()) {
+            if (row != null) {
+                final Advert advert = new Advert();
+                advert.getAddress().setCity(row.get("address.city"));
+                advert.getAddress().setCountryCode("fr");
+                advert.getAddress().setPostalCode(row.get("address.postalCode"));
+                advert.getAddress().setStreetAddress(row.get("address.streetAddress"));
+                advert.setDescription(row.get("description"));
+                advert.setEmail(row.get("email"));
+                advert.setName(row.get("name"));
+                advert.setPhoneNumber(row.get("phoneNumber"));
+                final String path = "/advert";
+                final URI uri = URI.create(baseEndPoint + path);
+                final String requestContentType = "application/json";
+                final WebResource webResource = jerseyClient.resource(uri);
+                webResource.header("Content-Type", requestContentType).post(ClientResponse.class, advert);
+            }
+
+        }
+
     }
 
 }
