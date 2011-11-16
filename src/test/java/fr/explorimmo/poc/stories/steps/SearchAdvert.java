@@ -11,8 +11,9 @@ import java.util.Map.Entry;
 
 import javax.ws.rs.core.MediaType;
 
+import junit.framework.Assert;
+
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-import org.jbehave.core.annotations.AfterScenario;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Named;
 import org.jbehave.core.annotations.Then;
@@ -50,8 +51,10 @@ public class SearchAdvert {
 
     List<Advert> results;
 
-    @Then("I sould get the adverts: $adverts")
-    public void expectedResult(@Named("adverts") final ExamplesTable advertsAsTable) {}
+    @Then("I should get $countAdverts adverts")
+    public void expectedResult(@Named("countAdverts") final int countAdverts) {
+        Assert.assertEquals(countAdverts, results.size());
+    }
 
     @When("I search adverts by criteria: $criteria")
     public void sendRequestWithCriteria(@Named("criteria") final ExamplesTable criteriaAsTable) {
@@ -78,7 +81,7 @@ public class SearchAdvert {
         this.responseContentType = responseContentType;
     }
 
-    @Given("adverts: $adverts")
+    @Given("before: $adverts")
     public void setup(@Named("adverts") final ExamplesTable advertsAsTable) {
         for (final Map<String, String> row : advertsAsTable.getRows()) {
             if (row != null) {
@@ -107,7 +110,7 @@ public class SearchAdvert {
         }
     }
 
-    @AfterScenario
+    @Then("teardown")
     public void tearDown() {
         for (final String resource : resources) {
             final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
