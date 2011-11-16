@@ -29,7 +29,6 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 
@@ -70,7 +69,7 @@ public class SearchAdvert {
         final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
         config.getClasses().add(JacksonJsonProvider.class);
         final Client jerseyClient = ApacheHttpClient4.create(config);
-        jerseyClient.addFilter(new LoggingFilter());
+        // jerseyClient.addFilter(new LoggingFilter());
         final WebResource webResource = jerseyClient.resource(uri);
         results = webResource.accept(MediaType.valueOf(responseContentType)).header("Content-Type", requestContentType)
                 .post(new GenericType<List<Advert>>() {}, query);

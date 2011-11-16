@@ -1,7 +1,8 @@
 Search advert stories
 
 Meta:
-@search
+
+@search off
 
 Narrative:
 In order to provide search capabilities to my software

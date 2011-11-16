@@ -840,15 +840,13 @@
 								<storyTimeoutInSecs>100</storyTimeoutInSecs>
 								<generateViewAfterStories>true</generateViewAfterStories>
 								<ignoreFailureInStories>false</ignoreFailureInStories>
-								<ignoreFailureInView>fasle</ignoreFailureInView>
+								<ignoreFailureInView>false</ignoreFailureInView>
 								<metaFilters>
-									<metaFilter>+search</metaFilter>
+									<metaFilter>-search</metaFilter>
 								</metaFilters>
 							</configuration>
 							<goals>
 								<goal>run-stories-with-annotated-embedder</goal>
-								<goal>report-stepdocs</goal>
-								<goal>generate-stories-view</goal>
 								<goal>unpack-view-resources</goal>
 							</goals>
 						</execution>
