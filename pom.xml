@@ -49,7 +49,8 @@
 		<dbunit.version>2.4.8</dbunit.version>
 		<jetty.version>6.1.26</jetty.version>
 		<groovy.version>1.8.3</groovy.version>
-		<jbehave.version>3.5.2</jbehave.version>
+		<jbehave.version>3.5.3</jbehave.version>
+		<jbehave-site-resources.version>3.1.1</jbehave-site-resources.version>
 		<commons-dbcp.version>1.4</commons-dbcp.version>
 
 		<!-- BUILD -->
@@ -405,6 +406,21 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>org.jbehave</groupId>
+				<artifactId>jbehave-core</artifactId>
+				<version>${jbehave.version}</version>
+				<classifier>resources</classifier>
+				<type>zip</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jbehave.site</groupId>
+				<artifactId>jbehave-site-resources</artifactId>
+				<version>${jbehave-site-resources.version}</version>
+				<type>zip</type>
+				<scope>test</scope>
+			</dependency>
 
 			<!-- SECURITY -->
 			<dependency>
@@ -601,6 +617,12 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jbehave</groupId>
+			<artifactId>jbehave-core</artifactId>
+			<classifier>resources</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 
@@ -827,26 +849,27 @@
 					</dependencies>
 					<executions>
 						<execution>
-							<id>run-stories-with-annotated-embedder</id>
+							<id>run-stories-as-embeddables</id>
 							<phase>integration-test</phase>
 							<configuration>
 								<scope>test</scope>
 								<includes>
-									<include>**/StoriesRunner.java</include>
+									<include>${jbehave.embeddables}</include>
 								</includes>
-								<skip>true</skip>
+								<excludes />
+								<skip>${jbehave.skip}</skip>
 								<batch>false</batch>
-								<threads>4</threads>
-								<storyTimeoutInSecs>100</storyTimeoutInSecs>
+								<threads>${jbehave.threads}</threads>
+								<storyTimeoutInSecs>${jbehave.storyTimeoutInSecs}</storyTimeoutInSecs>
 								<generateViewAfterStories>true</generateViewAfterStories>
-								<ignoreFailureInStories>false</ignoreFailureInStories>
+								<ignoreFailureInStories>${jbehave.ignoreFailureInStories}</ignoreFailureInStories>
 								<ignoreFailureInView>false</ignoreFailureInView>
 								<metaFilters>
-									<metaFilter>-search</metaFilter>
+									<metaFilter>${jbehave.meta.filters}</metaFilter>
 								</metaFilters>
 							</configuration>
 							<goals>
-								<goal>run-stories-with-annotated-embedder</goal>
+								<goal>run-stories-as-embeddables</goal>
 								<goal>unpack-view-resources</goal>
 							</goals>
 						</execution>
@@ -928,6 +951,14 @@
 				<!-- container properties -->
 				<container.host>localhost</container.host>
 				<container.port>9080</container.port>
+
+				<jbehave.embeddables>**/StoriesRunner.java</jbehave.embeddables>
+				<jbehave.skip>false</jbehave.skip>
+				<jbehave.threads>4</jbehave.threads>
+				<jbehave.storyTimeoutInSecs>1</jbehave.storyTimeoutInSecs>
+				<jbehave.ignoreFailureInStories>false</jbehave.ignoreFailureInStories>
+				<jbehave.meta.filters>+search on</jbehave.meta.filters>
+
 			</properties>
 			<build>
 				<resources>
