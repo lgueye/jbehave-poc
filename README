@@ -6,11 +6,12 @@ Supported features :
  - stories implementation written in java
  - tabular data injected @before test
  - clean up @after test
- - expectations expressed in tabulat form
+ - expectations expressed in tabular form
  - parameterized test
+ - meta filters support
+ - html reports support
 
 Desired features
  - stories editor w/ completion
- - better tag/meta support at runtime
 
 
