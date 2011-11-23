@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -46,7 +47,7 @@ public class AdvertController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdvertController.class);
 
     @POST
-    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Consumes({ MediaType.APPLICATION_JSON })
     public Response create(final Advert advert) throws Throwable {
 
         final Long id = facade.createAdvert(advert);
@@ -93,6 +94,20 @@ public class AdvertController {
         final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {};
 
         return Response.ok(entity).build();
+
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response get(@PathParam(value = "id") final Long id) throws Throwable {
+
+        final Advert advert = facade.readAdvert(id);
+
+        if (advert == null)
+            return Response.status(Response.Status.NOT_FOUND).build();
+
+        return Response.ok(advert).build();
 
     }
 }

@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import javax.ws.rs.core.MediaType;
 
+import com.sun.jersey.api.client.filter.LoggingFilter;
 import junit.framework.Assert;
 
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
@@ -69,7 +70,7 @@ public class SearchAdvert {
         final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
         config.getClasses().add(JacksonJsonProvider.class);
         final Client jerseyClient = ApacheHttpClient4.create(config);
-        // jerseyClient.addFilter(new LoggingFilter());
+        jerseyClient.addFilter(new LoggingFilter());
         final WebResource webResource = jerseyClient.resource(uri);
         results = webResource.accept(MediaType.valueOf(responseContentType)).header("Content-Type", requestContentType)
                 .post(new GenericType<List<Advert>>() {}, query);

@@ -943,7 +943,7 @@
 				<javax.persistence.jdbc.driver>org.h2.Driver</javax.persistence.jdbc.driver>
 				<javax.persistence.jdbc.url>jdbc:h2:mem:explorimmo-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;IGNORECASE=true</javax.persistence.jdbc.url>
 				<javax.persistence.jdbc.user>sa</javax.persistence.jdbc.user>
-				<javax.persistence.jdbc.password></javax.persistence.jdbc.password>
+				<javax.persistence.jdbc.password/>
 				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
 				<hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
 				<hibernate.show_sql>true</hibernate.show_sql>
@@ -955,9 +955,9 @@
 				<jbehave.embeddables>**/StoriesRunner.java</jbehave.embeddables>
 				<jbehave.skip>false</jbehave.skip>
 				<jbehave.threads>4</jbehave.threads>
-				<jbehave.storyTimeoutInSecs>1</jbehave.storyTimeoutInSecs>
+				<jbehave.storyTimeoutInSecs>2</jbehave.storyTimeoutInSecs>
 				<jbehave.ignoreFailureInStories>false</jbehave.ignoreFailureInStories>
-				<jbehave.meta.filters>+search on</jbehave.meta.filters>
+				<jbehave.meta.filters>+wip</jbehave.meta.filters>
 
 			</properties>
 			<build>
