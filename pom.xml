@@ -954,8 +954,8 @@
 
 				<jbehave.embeddables>**/StoriesRunner.java</jbehave.embeddables>
 				<jbehave.skip>false</jbehave.skip>
-				<jbehave.threads>4</jbehave.threads>
-				<jbehave.storyTimeoutInSecs>2</jbehave.storyTimeoutInSecs>
+				<jbehave.threads>1</jbehave.threads>
+				<jbehave.storyTimeoutInSecs>4</jbehave.storyTimeoutInSecs>
 				<jbehave.ignoreFailureInStories>false</jbehave.ignoreFailureInStories>
 				<jbehave.meta.filters>+wip</jbehave.meta.filters>
 
