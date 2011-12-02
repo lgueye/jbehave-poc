@@ -6,6 +6,7 @@ package fr.explorimmo.poc.web;
 import java.net.URI;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -26,9 +27,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import fr.explorimmo.poc.domain.Advert;
+import fr.explorimmo.poc.domain.ResponseError;
 import fr.explorimmo.poc.domain.business.Facade;
+import fr.explorimmo.poc.domain.exceptions.NotFoundException;
 
 /**
  * @author louis.gueye@gmail.com
@@ -45,6 +49,9 @@ public class AdvertController {
     UriInfo uriInfo;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdvertController.class);
+
+    @Autowired
+    ExceptionResolver exceptionResolver;
 
     @POST
     @Consumes({ MediaType.APPLICATION_JSON })
@@ -87,13 +94,30 @@ public class AdvertController {
 
         final List<Advert> results = facade.findAdvertsByCriteria(criteria);
 
+        final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {};
+
         if (CollectionUtils.isEmpty(results)) {
             LOGGER.info("No results found");
         }
 
-        final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {};
-
         return Response.ok(entity).build();
+
+    }
+
+    @GET
+    @Path("/find/reference/{reference}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response findByReference(@PathParam(value = "reference") final String reference) throws Throwable {
+
+        final Advert criteria = new Advert();
+        criteria.setReference(reference);
+
+        final List<Advert> results = facade.findAdvertsByCriteria(criteria);
+
+        if (CollectionUtils.isEmpty(results))
+            throw new NotFoundException(new Object[] { Advert.class, reference });
+
+        return Response.ok(results.get(0)).build();
 
     }
 
@@ -109,5 +133,12 @@ public class AdvertController {
 
         return Response.ok(advert).build();
 
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public void handleExceptions(final HttpServletRequest request, final Throwable th) {
+        final ResponseError error = new ResponseError(exceptionResolver.resolveMesage(request, th),
+                exceptionResolver.resolveHttpStatus(th));
+        Response.status(error.getHttpStatus()).entity(error).build();
     }
 }

@@ -61,8 +61,8 @@ public class StoriesRunner extends JUnitStories {
     }
 
     private ApplicationContext createContext() {
-        return new SpringApplicationContextFactory(this.getClass().getClassLoader(), "jbehave-context.xml",
-                "stories-context.xml").createApplicationContext();
+        return new SpringApplicationContextFactory(this.getClass().getClassLoader(), "stories-context.xml")
+                .createApplicationContext();
     }
 
     @Override

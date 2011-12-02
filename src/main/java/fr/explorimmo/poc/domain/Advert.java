@@ -38,6 +38,7 @@ public class Advert extends AbstractEntity {
     public static final int CONSTRAINT_DESCRIPTION_MAX_SIZE = 200;
     public static final int CONSTRAINT_EMAIL_MAX_SIZE = 100;
     public static final int CONSTRAINT_PHONE_NUMBER_MAX_SIZE = 20;
+    public static final int CONSTRAINT_REFERENCE_MAX_SIZE = 100;
 
     /**
 	 * 
@@ -70,6 +71,11 @@ public class Advert extends AbstractEntity {
     @Size(max = Advert.CONSTRAINT_PHONE_NUMBER_MAX_SIZE, message = "{advert.phoneNumber.max.size}", groups = {
             Create.class, Update.class })
     private String phoneNumber;
+
+    @NotEmpty(message = "{advert.reference.required}", groups = { Create.class, Update.class })
+    @Size(max = Advert.CONSTRAINT_REFERENCE_MAX_SIZE, message = "{advert.reference.max.size}", groups = { Create.class,
+            Update.class })
+    private String reference;
 
     @Valid
     @NotNull(message = "{advert.address.required}", groups = { Create.class, Update.class })
@@ -125,6 +131,10 @@ public class Advert extends AbstractEntity {
         return phoneNumber;
     }
 
+    public String getReference() {
+        return reference;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -155,6 +165,10 @@ public class Advert extends AbstractEntity {
 
     public void setPhoneNumber(final String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public void setReference(final String reference) {
+        this.reference = reference;
     }
 
 }
