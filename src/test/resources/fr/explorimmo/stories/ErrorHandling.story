@@ -31,7 +31,7 @@ And the response message should be <message>
 Examples:
 |responseContentType|responseLanguage|reference|message
 |application/json|en|ref-55555-ermcccvpsole-59999|Advert with reference ref-55555-ermcccvpsole-59999 was not found
-|application/json|fr|ref-55555-ermcccvpsole-59999|La référence ref-55555-ermcccvpsole-59999 n'existe pas
+|application/json|fr|ref-55555-ermcccvpsole-59999|La référence ref-55555-ermcccvpsole-59999 est inconnue
 
 Scenario: Same semantic with same context and different unsupported languages should return same http code and same messages (fallback language)
 Given I receive <responseContentType> data
@@ -45,5 +45,3 @@ Examples:
 |responseContentType|responseLanguage|reference|message
 |application/json|it|ref-55555-ermcccvpsole-59999|Advert with reference ref-55555-ermcccvpsole-59999 was not found
 |application/json|es|ref-777|Advert with reference ref-777 was not found
-|application/json|fr|ref-55555-ermcccvpsole-59999|La référence ref-55555-ermcccvpsole-59999 n'existe pas
-|application/json|fr|ref-777|La référence ref-777 n'existe pas

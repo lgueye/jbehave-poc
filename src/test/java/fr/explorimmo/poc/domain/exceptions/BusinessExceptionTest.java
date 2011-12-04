@@ -12,7 +12,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import fr.explorimmo.poc.domain.Constants;
-import fr.explorimmo.poc.domain.exceptions.BusinessException;
 
 /**
  * @author louis.gueye@gmail.com
@@ -21,14 +20,15 @@ public class BusinessExceptionTest {
 
 	/**
 	 * Test method for
-	 * {@link fr.explorimmo.poc.domain.exceptions.BusinessException#getMessage()} .
+	 * {@link fr.explorimmo.poc.domain.exceptions.BusinessException#getMessage()}
+	 * .
 	 */
 	@Test
 	public final void testGetMessage() {
 		final String messageCode = "test.code";
 		final Object[] messageArgs = new Object[] { "sdfsdf", 5L };
 		final String defaultMessage = "default message";
-		final String preferredLanguage = Locale.ENGLISH.getLanguage();
+		final String preferredLanguage = Locale.FRENCH.getLanguage();
 		final Throwable cause = new Throwable("bla bla");
 		BusinessException e = null;
 

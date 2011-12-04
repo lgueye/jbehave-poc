@@ -3,13 +3,20 @@
  */
 package fr.explorimmo.poc.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author louis.gueye@gmail.com
  */
+@XmlRootElement
 public class ResponseError extends AbstractObject {
 
 	private String	message;
 	private int		httpStatus;
+
+	public ResponseError() {
+
+	}
 
 	/**
 	 * @param errorCode
