@@ -55,7 +55,7 @@ public class StoriesRunner extends JUnitStories {
                 .useStoryReporterBuilder(
                     new StoryReporterBuilder().withCodeLocation(CodeLocations.codeLocationFromClass(embeddableClass))
                             .withDefaultFormats().withViewResources(viewResources).withFailureTrace(true)
-                            .withFormats(Format.HTML_TEMPLATE).withFailureTraceCompression(true)
+                            .withFormats(Format.HTML_TEMPLATE, Format.ANSI_CONSOLE).withFailureTraceCompression(true)
                             .withCrossReference(xref)).useParameterConverters(parameterConverters)
                 .useStepMonitor(xref.getStepMonitor());
     }
