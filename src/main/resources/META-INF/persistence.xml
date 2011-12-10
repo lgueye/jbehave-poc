@@ -6,7 +6,7 @@
 	<persistence-unit name="explorimmo-persistence-unit"
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>fr.explorimmo.poc.domain.Address</class>
-		<class>fr.explorimmo.poc.domain.Advert</class>
+		<class>org.diveintojee.poc.domain.Address</class>
+		<class>org.diveintojee.poc.domain.Advert</class>
 	</persistence-unit>
 </persistence>

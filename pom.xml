@@ -952,9 +952,9 @@
 				<container.host>localhost</container.host>
 				<container.port>9080</container.port>
 
-				<jbehave.embeddables>**/StoriesRunner.java</jbehave.embeddables>
+				<jbehave.embeddables>**/stories/*.java</jbehave.embeddables>
 				<jbehave.skip>false</jbehave.skip>
-				<jbehave.threads>1</jbehave.threads>
+				<jbehave.threads>2</jbehave.threads>
 				<jbehave.storyTimeoutInSecs>10</jbehave.storyTimeoutInSecs>
 				<jbehave.ignoreFailureInStories>false</jbehave.ignoreFailureInStories>
 				<jbehave.meta.filters>+wip</jbehave.meta.filters>

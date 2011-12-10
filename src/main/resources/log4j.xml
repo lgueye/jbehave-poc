@@ -15,17 +15,17 @@
 		</layout>
 	</appender>
 	<!-- Application Loggers -->
-	<logger name="fr.explorimmo">
-		<level value="${fr.explorimmo.log.level}" />
+	<logger name="org.diveintojee">
+		<level value="${org.diveintojee.log.level}" />
 	</logger>
 	<logger name="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<level value="${fr.explorimmo.log.level}" />
+		<level value="${org.diveintojee.log.level}" />
 	</logger>
 	<logger name="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-		<level value="${fr.explorimmo.log.level}" />
+		<level value="${org.diveintojee.log.level}" />
 	</logger>
 	<logger name="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-		<level value="${fr.explorimmo.log.level}" />
+		<level value="${org.diveintojee.log.level}" />
 	</logger>
 	<!-- Root Logger -->
 	<root>

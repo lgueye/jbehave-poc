@@ -1,0 +1,53 @@
+/**
+ * 
+ */
+package org.diveintojee.poc.stories;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.diveintojee.poc.stories.steps.ContentNegotiationSteps;
+import org.jbehave.core.configuration.Configuration;
+import org.jbehave.core.configuration.MostUsefulConfiguration;
+import org.jbehave.core.io.CodeLocations;
+import org.jbehave.core.io.StoryFinder;
+import org.jbehave.core.junit.JUnitStories;
+import org.jbehave.core.reporters.Format;
+import org.jbehave.core.steps.InjectableStepsFactory;
+import org.jbehave.core.steps.InstanceStepsFactory;
+
+
+/**
+ * @author louis.gueye@gmail.com
+ */
+public class ContentNegotiationStory extends JUnitStories {
+
+	@Override
+	public Configuration configuration() {
+
+		Configuration configuration = new MostUsefulConfiguration();
+
+		configuration.storyReporterBuilder() // Configure report builder
+				.withFormats(Format.HTML_TEMPLATE, Format.ANSI_CONSOLE) // Configure
+																		// desired
+																		// output
+																		// formats
+				.withFailureTrace(true) //
+				.withMultiThreading(true);
+
+		configuration.storyControls().doSkipScenariosAfterFailure(false);
+
+		return configuration;
+	}
+
+	@Override
+	public InjectableStepsFactory stepsFactory() {
+		return new InstanceStepsFactory(configuration(), new ContentNegotiationSteps());
+	}
+
+	@Override
+	protected List<String> storyPaths() {
+		return new StoryFinder().findPaths(CodeLocations.codeLocationFromClass(this.getClass()).getFile(),
+				Arrays.asList("**/content_negotiation.story"), null);
+	}
+}
