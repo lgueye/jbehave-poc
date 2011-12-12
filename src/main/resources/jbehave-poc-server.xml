@@ -48,7 +48,7 @@
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-		<property name="persistenceUnitName" value="explorimmo-persistence-unit" />
+		<property name="persistenceUnitName" value="jbehave-poc-persistence-unit" />
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>

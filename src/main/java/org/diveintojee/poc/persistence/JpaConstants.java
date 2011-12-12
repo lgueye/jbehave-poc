@@ -8,6 +8,6 @@ package org.diveintojee.poc.persistence;
  */
 public class JpaConstants {
 
-	public static final String	PERSISTANCE_UNIT_NAME	= "explorimmo-persistence-unit";
+    public static final String PERSISTANCE_UNIT_NAME = "jbehave-poc-persistence-unit";
 
 }

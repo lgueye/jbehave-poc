@@ -21,18 +21,18 @@
           <property name="authenticationManager" ref="authenticationManager"/>
           <property name="authenticationEntryPoint" ref="defaultEntryPoint"/>
     </bean>
-    
+
     <sec:http entry-point-ref="defaultEntryPoint" auto-config="true" realm="diveintojee.org">
-		<sec:intercept-url pattern="/advert/protected" access="ROLE_ADMIN" />
 		<sec:http-basic/>
+		<sec:intercept-url pattern="/**/protected" access="ROLE_ADMIN" />
+		<sec:access-denied-handler ref="defaultAccessDeniedHandler" />
     </sec:http>
 
 	<sec:authentication-manager alias="authenticationManager">
 		<sec:authentication-provider>
 			<sec:user-service>
-				<sec:user name="visitor" password="visitor"
-					authorities="ROLE_USER, ROLE_ADMIN" />
 				<sec:user name="bob" password="bob" authorities="ROLE_USER" />
+				<sec:user name="visitor" password="visitor" authorities="ROLE_USER,ROLE_ADMIN" />
 			</sec:user-service>
 		</sec:authentication-provider>
 	</sec:authentication-manager>

@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>fr.explorimmo.poc</groupId>
+	<groupId>org.diveintojee.poc</groupId>
 	<artifactId>jbehave-poc</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
@@ -54,7 +54,7 @@
 		<commons-dbcp.version>1.4</commons-dbcp.version>
 
 		<!-- BUILD -->
-		<webapp.module.context>explorimmo-webapp</webapp.module.context>
+		<webapp.module.context>jbehave-poc-webapp</webapp.module.context>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.6</java.version>
@@ -76,8 +76,8 @@
 
 			<!-- MAIN APP -->
 			<dependency>
-				<groupId>fr.explorimmo</groupId>
-				<artifactId>explorimmo-webapp</artifactId>
+				<groupId>org.diveintojee</groupId>
+				<artifactId>jbehave-poc-webapp</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -889,8 +889,8 @@
 							</component>
 						</components>
 						<componentProperties>
-							<persistenceunit>explorimmo-persistence-unit</persistenceunit>
-							<outputfilename>explorimmo-ddl.sql</outputfilename>
+							<persistenceunit>jbehave-poc-persistence-unit</persistenceunit>
+							<outputfilename>jbehave-poc-ddl.sql</outputfilename>
 							<drop>true</drop>
 							<create>true</create>
 							<export>false</export>
@@ -936,12 +936,12 @@
 			<id>embedded</id>
 			<properties>
 				<!-- log properties -->
-				<log.file.path>${project.build.directory}/explorimmo</log.file.path>
-				<fr.explorimmo.log.level>debug</fr.explorimmo.log.level>
+				<log.file.path>${project.build.directory}/jbehave-poc</log.file.path>
+				<org.diveintojee.log.level>debug</org.diveintojee.log.level>
 
 				<!-- persistence properties -->
 				<javax.persistence.jdbc.driver>org.h2.Driver</javax.persistence.jdbc.driver>
-				<javax.persistence.jdbc.url>jdbc:h2:mem:explorimmo-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;IGNORECASE=true</javax.persistence.jdbc.url>
+				<javax.persistence.jdbc.url>jdbc:h2:mem:jbehave-poc-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;IGNORECASE=true</javax.persistence.jdbc.url>
 				<javax.persistence.jdbc.user>sa</javax.persistence.jdbc.user>
 				<javax.persistence.jdbc.password/>
 				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
