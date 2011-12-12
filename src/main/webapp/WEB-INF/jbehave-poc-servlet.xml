@@ -16,6 +16,27 @@
 	<context:component-scan
 		base-package="org.diveintojee.poc.web" />
 
+    <bean id="authenticationFilter"
+          class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+          <property name="authenticationManager" ref="authenticationManager"/>
+          <property name="authenticationEntryPoint" ref="defaultEntryPoint"/>
+    </bean>
+    
+    <sec:http entry-point-ref="defaultEntryPoint" auto-config="true" realm="diveintojee.org">
+		<sec:intercept-url pattern="/advert/protected" access="ROLE_ADMIN" />
+		<sec:http-basic/>
+    </sec:http>
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider>
+			<sec:user-service>
+				<sec:user name="visitor" password="visitor"
+					authorities="ROLE_USER, ROLE_ADMIN" />
+				<sec:user name="bob" password="bob" authorities="ROLE_USER" />
+			</sec:user-service>
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+
 	<bean class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
 
 </beans>

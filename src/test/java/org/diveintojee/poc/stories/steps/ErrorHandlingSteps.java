@@ -6,6 +6,7 @@ package org.diveintojee.poc.stories.steps;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.ws.rs.core.MediaType;
 
@@ -20,8 +21,6 @@ import org.jbehave.core.annotations.Named;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 import org.junit.Assert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.sun.jersey.api.client.Client;
@@ -32,21 +31,18 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 
-
 /**
  * @author louis.gueye@gmail.com
  */
 @Component
 public class ErrorHandlingSteps {
 
-	@Autowired
-	@Qualifier("baseEndPoint")
-	String					baseEndPoint;
-	String					responseContentType;
-	List<String>			resources			= new ArrayList<String>();
-	String					lastCreatedResourceURI;
-	private String			responseLanguage	= "en";
-	private ClientResponse	response;
+	private final String		baseEndPoint		= ResourceBundle.getBundle("stories-context").getString(
+															"baseEndPoint");
+	private String				responseContentType;
+	private final List<String>	resources			= new ArrayList<String>();
+	private String				responseLanguage	= "en";
+	private ClientResponse		response;
 
 	@Then("the response message should be <message>")
 	public void expectResponseMessage(@Named("message") final String responseMessage) {

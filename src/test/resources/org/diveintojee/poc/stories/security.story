@@ -1,7 +1,7 @@
 Security story
 
 Meta:
-@done
+@wip
 
 Narrative:
 In order to provide security capabilities to my service
@@ -10,21 +10,43 @@ I want to clearly get notified when a security event happens
 
 Scenario: requesting protected resource with wrong uid should fail
 Given I authenticate with <uid> uid and whatever password
-And I send <requestContentType> data
-And I accept <language> language
-And I accept <responseContentType> data
+And I accept <responseLanguage> language
 When I request a protected resource
-Then I should get an unsuccessfull response
+Then I should get an unsuccessful response
 And the response code should be 401
-And the error message should be <message>
+And the response message should be <message>
 
 Examples:
-|uid|requestContentType|language|responseContentType|message|
-||application/json|en|application/json|bad credentials provided|
-|unknown-user|application/json|en|application/json|bad credentials provided|
-||application/xml|en|application/json|bad credentials provided|
-|unknown-user|application/xml|en|application/json|bad credentials provided|
-||application/json|fr|application/json|informations de connexion erronées|
-|unknown-user|application/json|fr|application/json|informations de connexion erronées|
-||application/xml|fr|application/json|informations de connexion erronées|
-|unknown-user|application/xml|fr|application/json|informations de connexion erronées|
+|uid|responseLanguage|message|
+||en|bad credentials provided|
+|unknown-user|en|bad credentials provided|
+||fr|informations d'identification incorrectes|
+|unknown-user|fr|informations d'identification incorrectes|
+
+Scenario: requesting protected resource with wrong password should fail
+Given I authenticate with bob uid and <password> password
+And I accept <responseLanguage> language
+When I request a protected resource
+Then I should get an unsuccessful response
+And the response code should be 401
+And the response message should be <message>
+
+Examples:
+|password|responseLanguage|message|
+||en|bad credentials provided|
+|unknown-password|en|bad credentials provided|
+||fr|informations d'identification incorrectes|
+|unknown-password|fr|informations d'identification incorrectes|
+
+Scenario: requesting protected resource with wrong role should fail
+Given I authenticate with bob uid and bob password
+And I accept <responseLanguage> language
+When I request a protected resource that require ADMIN rights
+Then I should get an unsuccessful response
+And the response code should be 403
+And the response message should be <message>
+
+Examples:
+responseLanguage|message|
+|en|Access denied|
+|fr|Accès refusé|

@@ -28,18 +28,17 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 
-
 /**
  * @author louis.gueye@gmail.com
  */
 public class ContentNegotiationSteps {
 
-	String			baseEndPoint	= ResourceBundle.getBundle("stories-context").getString("baseEndPoint");
-	String			responseContentType;
-	List<String>	resources		= new ArrayList<String>();
-	private int		responseStatus;
-	private String	requestContentType;
-	String			lastCreatedResourceURI;
+	private final String		baseEndPoint	= ResourceBundle.getBundle("stories-context").getString("baseEndPoint");
+	private String				responseContentType;
+	private final List<String>	resources		= new ArrayList<String>();
+	private int					responseStatus;
+	private String				requestContentType;
+	private String				lastCreatedResourceURI;
 
 	@Then("the response code should be $statusCode")
 	public void expectStatusCode(@Named("statusCode") final int statusCode) {

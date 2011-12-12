@@ -29,6 +29,10 @@
 	<listener>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
+	<filter>
+		<filter-name>authenticationFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
 	<servlet>
 		<servlet-name>jerseyspring</servlet-name>
 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
@@ -42,6 +46,10 @@
 		<servlet-name>jerseyspring</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
+	<filter-mapping>
+		<filter-name>authenticationFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

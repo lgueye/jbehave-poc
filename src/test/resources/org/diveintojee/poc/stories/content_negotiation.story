@@ -1,7 +1,7 @@
 Content Negotiation story
 
 Meta:
-@wip
+@done
 
 Narrative:
 In order to provide content negotiation capabilities to my service

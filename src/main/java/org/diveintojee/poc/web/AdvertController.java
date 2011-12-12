@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 /**
  * @author louis.gueye@gmail.com
  */
@@ -123,6 +122,27 @@ public class AdvertController {
 		if (advert == null) return Response.status(Response.Status.NOT_FOUND).build();
 
 		return Response.ok(advert).build();
+
+	}
+
+	@GET
+	@Path("/protected")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response returnProtectedResource() throws Throwable {
+
+		final Advert criteria = new Advert();
+
+		// very important phone number !!!!!
+		criteria.setPhoneNumber("0033606060606");
+
+		final List<Advert> results = this.facade.findAdvertsByCriteria(criteria);
+
+		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
+		};
+
+		if (CollectionUtils.isEmpty(results)) AdvertController.LOGGER.info("No results found");
+
+		return Response.ok(entity).build();
 
 	}
 
