@@ -74,13 +74,6 @@
 	<dependencyManagement>
 		<dependencies>
 
-			<!-- MAIN APP -->
-			<dependency>
-				<groupId>org.diveintojee</groupId>
-				<artifactId>jbehave-poc-webapp</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
 			<!-- LOGGING -->
 			<dependency>
 				<groupId>org.slf4j</groupId>

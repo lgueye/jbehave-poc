@@ -14,7 +14,7 @@
 	<import resource="classpath:jbehave-poc-server.xml"/>
 
 	<context:component-scan
-		base-package="org.diveintojee.poc.web" />
+		base-package="org.diveintojee.poc.jbehave.web" />
 
     <bean id="authenticationFilter"
           class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">

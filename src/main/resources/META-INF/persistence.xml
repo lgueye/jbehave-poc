@@ -6,7 +6,7 @@
 	<persistence-unit name="jbehave-poc-persistence-unit"
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>org.diveintojee.poc.domain.Address</class>
-		<class>org.diveintojee.poc.domain.Advert</class>
+		<class>org.diveintojee.poc.jbehave.domain.Address</class>
+		<class>org.diveintojee.poc.jbehave.domain.Advert</class>
 	</persistence-unit>
 </persistence>

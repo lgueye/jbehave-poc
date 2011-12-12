@@ -9,7 +9,7 @@
 	<context:property-placeholder location="classpath:persistence.properties" />
 
 	<context:component-scan
-		base-package="org.diveintojee.poc.persistence,org.diveintojee.poc.business" />
+		base-package="org.diveintojee.poc.jbehave.persistence,org.diveintojee.poc.jbehave.business" />
 
 	<bean id="resourceBundleLocator"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -58,9 +58,9 @@
 				<prop key="javax.persistence.jdbc.url">${javax.persistence.jdbc.url}</prop>
 				<prop key="javax.persistence.jdbc.user">${javax.persistence.jdbc.user}</prop>
 				<prop key="javax.persistence.jdbc.password">${javax.persistence.jdbc.password}</prop>
-				<prop key="javax.persistence.validation.group.pre-persist">org.diveintojee.poc.domain.validation.Create</prop>
-				<prop key="javax.persistence.validation.group.pre-update">org.diveintojee.poc.domain.validation.Update</prop>
-				<prop key="javax.persistence.validation.group.pre-remove">org.diveintojee.poc.domain.validation.Delete</prop>
+				<prop key="javax.persistence.validation.group.pre-persist">org.diveintojee.poc.jbehave.domain.validation.Create</prop>
+				<prop key="javax.persistence.validation.group.pre-update">org.diveintojee.poc.jbehave.domain.validation.Update</prop>
+				<prop key="javax.persistence.validation.group.pre-remove">org.diveintojee.poc.jbehave.domain.validation.Delete</prop>
 				<prop key="hibernate.ejb.event.pre-insert">org.hibernate.cfg.beanvalidation.BeanValidationEventListener
 				</prop>
 				<prop key="hibernate.ejb.event.pre-update">org.hibernate.cfg.beanvalidation.BeanValidationEventListener
