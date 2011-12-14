@@ -11,7 +11,6 @@ import org.diveintojee.poc.jbehave.domain.AbstractEntity;
 import org.diveintojee.poc.jbehave.domain.Advert;
 import org.diveintojee.poc.jbehave.domain.validation.ValidationContext;
 
-
 /**
  * @author louis.gueye@gmail.com
  */
@@ -57,5 +56,11 @@ public interface Facade {
 	 * @throws ConstraintViolationException
 	 */
 	<T extends AbstractEntity> void validate(T type, ValidationContext context);
+
+	/**
+	 * @param criteria
+	 * @return
+	 */
+	List<Advert> findProtectedAdvertsByCriteria(Advert criteria);
 
 }

@@ -135,7 +135,7 @@ public class AdvertController {
 		// very important phone number !!!!!
 		criteria.setPhoneNumber("0033606060606");
 
-		final List<Advert> results = this.facade.findAdvertsByCriteria(criteria);
+		final List<Advert> results = this.facade.findProtectedAdvertsByCriteria(criteria);
 
 		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
 		};

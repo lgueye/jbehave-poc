@@ -15,7 +15,6 @@ public class ResponseError extends AbstractObject {
 	private int		httpStatus;
 
 	public ResponseError() {
-
 	}
 
 	/**

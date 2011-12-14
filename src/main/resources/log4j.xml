@@ -18,17 +18,8 @@
 	<logger name="org.diveintojee">
 		<level value="${org.diveintojee.log.level}" />
 	</logger>
-	<logger name="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	<logger name="com.sun.jersey">
 		<level value="${org.diveintojee.log.level}" />
-	</logger>
-	<logger name="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-		<level value="${org.diveintojee.log.level}" />
-	</logger>
-	<logger name="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-		<level value="${org.diveintojee.log.level}" />
-	</logger>
-	<logger name="org.springframework.security">
-		<level value="debug" />
 	</logger>
 	<!-- Root Logger -->
 	<root>

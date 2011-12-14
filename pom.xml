@@ -34,6 +34,7 @@
 
 		<!-- SECURITY -->
 		<spring.security.version>3.0.7.RELEASE</spring.security.version>
+		<jsr250-api.version>1.0</jsr250-api.version>
 
 		<!-- WEB, REST, MVC -->
 		<jersey.version>1.10</jersey.version>
@@ -417,6 +418,11 @@
 
 			<!-- SECURITY -->
 			<dependency>
+				<groupId>javax.annotation</groupId>
+				<artifactId>jsr250-api</artifactId>
+				<version>${jsr250-api.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
 				<version>${spring.security.version}</version>
@@ -616,6 +622,10 @@
 			<artifactId>jbehave-core</artifactId>
 			<classifier>resources</classifier>
 			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -936,7 +946,7 @@
 				<javax.persistence.jdbc.driver>org.h2.Driver</javax.persistence.jdbc.driver>
 				<javax.persistence.jdbc.url>jdbc:h2:mem:jbehave-poc-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;IGNORECASE=true</javax.persistence.jdbc.url>
 				<javax.persistence.jdbc.user>sa</javax.persistence.jdbc.user>
-				<javax.persistence.jdbc.password/>
+				<javax.persistence.jdbc.password />
 				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
 				<hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
 				<hibernate.show_sql>true</hibernate.show_sql>
@@ -947,10 +957,10 @@
 
 				<jbehave.embeddables>**/stories/*.java</jbehave.embeddables>
 				<jbehave.skip>false</jbehave.skip>
-				<jbehave.threads>2</jbehave.threads>
+				<jbehave.threads>1</jbehave.threads>
 				<jbehave.storyTimeoutInSecs>10</jbehave.storyTimeoutInSecs>
 				<jbehave.ignoreFailureInStories>false</jbehave.ignoreFailureInStories>
-				<jbehave.meta.filters>+wip</jbehave.meta.filters>
+				<jbehave.meta.filters>+progress done</jbehave.meta.filters>
 
 			</properties>
 			<build>

@@ -1,7 +1,7 @@
 Security story
 
 Meta:
-@wip
+@progress done
 
 Narrative:
 In order to provide security capabilities to my service
@@ -37,16 +37,3 @@ Examples:
 |unknown-password|en|bad credentials provided|
 ||fr|informations d'identification incorrectes|
 |unknown-password|fr|informations d'identification incorrectes|
-
-Scenario: requesting protected resource with wrong role should fail
-Given I authenticate with bob uid and bob password
-And I accept <responseLanguage> language
-When I request a protected resource that require ADMIN rights
-Then I should get an unsuccessful response
-And the response code should be 403
-And the response message should be <message>
-
-Examples:
-responseLanguage|message|
-|en|Access denied|
-|fr|Accès refusé|
