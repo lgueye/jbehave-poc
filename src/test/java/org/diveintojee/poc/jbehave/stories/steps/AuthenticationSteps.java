@@ -12,7 +12,6 @@ import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.diveintojee.poc.jbehave.domain.Advert;
 import org.diveintojee.poc.jbehave.test.TestUtils;
 import org.jbehave.core.annotations.AfterStory;
-import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Aliases;
 import org.jbehave.core.annotations.BeforeStory;
 import org.jbehave.core.annotations.Given;
@@ -20,7 +19,6 @@ import org.jbehave.core.annotations.Named;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 import org.junit.Assert;
-import org.springframework.stereotype.Component;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -35,8 +33,7 @@ import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 /**
  * @author louis.gueye@gmail.com
  */
-@Component
-public class SecuritySteps {
+public class AuthenticationSteps {
 
 	private final String		baseEndPoint		= ResourceBundle.getBundle("stories-context").getString(
 															"baseEndPoint");
@@ -45,7 +42,7 @@ public class SecuritySteps {
 	private ClientResponse		response;
 	private final Client		jerseyClient;
 
-	public SecuritySteps() {
+	public AuthenticationSteps() {
 		final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
 		this.jerseyClient = ApacheHttpClient4.create(config);
 		this.jerseyClient.addFilter(new LoggingFilter());
@@ -66,7 +63,6 @@ public class SecuritySteps {
 	}
 
 	@When("I request a protected resource")
-	@Alias("I request a protected resource that require ADMIN rights")
 	public void requestProtectedResource() {
 		final String path = "/advert/protected";
 		final URI uri = URI.create(this.baseEndPoint + path);

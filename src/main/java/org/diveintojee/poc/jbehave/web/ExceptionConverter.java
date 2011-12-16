@@ -77,7 +77,6 @@ public class ExceptionConverter {
 
     /**
      * @param request
-     * @param errorCode
      * @param th
      * @return
      */

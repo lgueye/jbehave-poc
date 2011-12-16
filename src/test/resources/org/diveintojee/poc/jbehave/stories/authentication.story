@@ -1,14 +1,14 @@
 Security story
 
 Meta:
-@wip
+@progress done
 
 Narrative:
 In order to provide security capabilities to my service
 As a client
 I want to clearly get notified when a security event happens
 
-Scenario: requesting protected resource with wrong uid should fail
+Scenario: requesting a protected resource with wrong uid should return 401
 Given I authenticate with <uid> uid and whatever password
 And I accept <responseLanguage> language
 When I request a protected resource
@@ -23,7 +23,7 @@ Examples:
 ||fr|informations d'identification incorrectes|
 |unknown-user|fr|informations d'identification incorrectes|
 
-Scenario: requesting protected resource with wrong password should fail
+Scenario: requesting a protected resource with correct uid and wrong password should return 401
 Given I authenticate with bob uid and <password> password
 And I accept <responseLanguage> language
 When I request a protected resource
@@ -37,16 +37,3 @@ Examples:
 |unknown-password|en|bad credentials provided|
 ||fr|informations d'identification incorrectes|
 |unknown-password|fr|informations d'identification incorrectes|
-
-Scenario: requesting protected resource with wrong role should fail
-Given I authenticate with bob uid and bob password
-And I accept <responseLanguage> language
-When I request a protected resource that require ADMIN rights
-Then I should get an unsuccessful response
-And the response code should be 403
-And the response message should be <message>
-
-Examples:
-responseLanguage|message|
-|en|Access denied|
-|fr|Accès refusé|

@@ -6,7 +6,7 @@ package org.diveintojee.poc.jbehave.stories;
 import java.util.Arrays;
 import java.util.List;
 
-import org.diveintojee.poc.jbehave.stories.steps.SecuritySteps;
+import org.diveintojee.poc.jbehave.stories.steps.AuthorizationSteps;
 import org.jbehave.core.configuration.Configuration;
 import org.jbehave.core.configuration.MostUsefulConfiguration;
 import org.jbehave.core.io.CodeLocations;
@@ -16,11 +16,10 @@ import org.jbehave.core.reporters.Format;
 import org.jbehave.core.steps.InjectableStepsFactory;
 import org.jbehave.core.steps.InstanceStepsFactory;
 
-
 /**
  * @author louis.gueye@gmail.com
  */
-public class SecurityStoryRunner extends JUnitStories {
+public class AuthorizationStory extends JUnitStories {
 
 	@Override
 	public Configuration configuration() {
@@ -42,12 +41,12 @@ public class SecurityStoryRunner extends JUnitStories {
 
 	@Override
 	public InjectableStepsFactory stepsFactory() {
-		return new InstanceStepsFactory(configuration(), new SecuritySteps());
+		return new InstanceStepsFactory(configuration(), new AuthorizationSteps());
 	}
 
 	@Override
 	protected List<String> storyPaths() {
 		return new StoryFinder().findPaths(CodeLocations.codeLocationFromClass(this.getClass()).getFile(),
-				Arrays.asList("**/security.story"), null);
+				Arrays.asList("**/authorization.story"), null);
 	}
 }
