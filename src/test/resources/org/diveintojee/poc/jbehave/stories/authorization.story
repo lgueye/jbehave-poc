@@ -1,7 +1,7 @@
 Security story
 
 Meta:
-@progress wip
+@progress done
 
 Narrative:
 In order to provide security capabilities to my service
