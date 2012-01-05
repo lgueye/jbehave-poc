@@ -160,4 +160,13 @@ public class FacadeImpl implements Facade {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#findAdvertsByCriteria(java.lang.String,
+	 *      java.lang.String, int, int, int)
+	 */
+	@Override
+	public List<Advert> findAdvertsByCriteria(String query, String sort, int from, int itemsPerPage) {
+		throw new UnsupportedOperationException();
+	}
+
 }

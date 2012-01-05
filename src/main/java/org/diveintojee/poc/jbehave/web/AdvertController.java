@@ -14,6 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -109,6 +110,26 @@ public class AdvertController {
 		if (CollectionUtils.isEmpty(results)) throw new NotFoundException(new Object[] { reference });
 
 		return Response.ok(results.get(0)).build();
+
+	}
+
+	@GET
+	@Path("/search/adverts")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response findByCriteria(//
+			@QueryParam(value = "query") final String query, //
+			@QueryParam(value = "sort") final String sort,//
+			@QueryParam(value = "from") final int from, //
+			@QueryParam(value = "itemsPerPage") final int itemsPerPage) throws Throwable {//
+
+		final List<Advert> results = this.facade.findAdvertsByCriteria(query, sort, from, itemsPerPage);
+
+		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
+		};
+
+		if (CollectionUtils.isEmpty(results)) AdvertController.LOGGER.info("No results found");
+
+		return Response.ok(entity).build();
 
 	}
 

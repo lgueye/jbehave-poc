@@ -16,11 +16,12 @@ Given adverts:
 |Sherlock Holmes|Sherlock Holmes, excellent condition, BLU-RAY, 5€, 1€ shipping|arcanes@chaos.com|061565234102|B0035WVABS|59 rue de la convention|Paris 15ème|75015|fr|
 |Le vol des cigognes|Le vol des cigognes, Jean-Christophe GRANGE, good condition, 3€, 1€ shipping|vol@cigognes.com|062365234102|978-2253170570|118 rue Jean Jaures|Puteaux|92800|fr|
 |Ninja Gaiden|Ninja Gaiden 2 features a new and improved game engine, developed from the ground up exclusively for Microsoft and Xbox 360, 5€, 2€ shipping|ninja@gaiden.com|070165234102|B0012PX9HS|9 rue Marcel Monge|Suresnes|92150|fr|
-When I find by exact reference "B0035WVABS" 
-And I receive <responseContentType> data
+When I receive <responseContentType> data
+And I find by exact reference "B0035WVABS" 
 Then I should get the following adverts: 
 |name|description|email|phoneNumber|reference|address.streetAddress|address.city|address.postalCode|address.countryCode|
 |Sherlock Holmes|Sherlock Holmes, excellent condition, BLU-RAY, 5€, 1€ shipping|arcanes@chaos.com|061565234102|B0035WVABS|59 rue de la convention|Paris 15ème|75015|fr|
+
 Examples:
 |responseContentType|
 |application/xml|

@@ -63,4 +63,14 @@ public interface Facade {
 	 */
 	List<Advert> findProtectedAdvertsByCriteria(Advert criteria);
 
+	/**
+	 * @param query
+	 * @param sort
+	 * @param maxResults
+	 * @param from
+	 * @param itemsPerPage
+	 * @return
+	 */
+	List<Advert> findAdvertsByCriteria(String query, String sort, int from, int itemsPerPage);
+
 }
