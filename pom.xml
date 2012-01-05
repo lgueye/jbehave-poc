@@ -29,6 +29,9 @@
 		<validation-api.version>1.0.0.GA</validation-api.version>
 		<hibernate-validator-annotation-processor>4.2.0.Final</hibernate-validator-annotation-processor>
 
+		<!-- SEARCH -->
+		<elasticsearch.version>0.18.6</elasticsearch.version>
+
 		<!-- CONTAINER -->
 		<spring.version>3.0.6.RELEASE</spring.version>
 
@@ -71,6 +74,14 @@
 		<cobertura-maven-plugin.version>2.5.1</cobertura-maven-plugin.version>
 
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>sonatype-releases</id>
+			<name>Sonatype Releases Repository</name>
+			<url>http://oss.sonatype.org/content/repositories/releases/</url>
+		</repository>
+	</repositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -159,6 +170,14 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+
+			<!-- SEARCH -->
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>${elasticsearch.version}</version>
+			</dependency>
+
 
 			<!-- CONTAINER -->
 			<dependency>
