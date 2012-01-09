@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.diveintojee.poc.jbehave.persistence.BaseDao;
-import org.diveintojee.poc.jbehave.persistence.JpaConstants;
+import org.diveintojee.poc.jbehave.persistence.PersistenceConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Repository;
 @Repository(BaseDao.BEAN_ID)
 public class BaseDaoImpl implements BaseDao {
 
-    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext(unitName = PersistenceConstants.PERSISTANCE_UNIT_NAME)
     private EntityManager entityManager;
 
     /**

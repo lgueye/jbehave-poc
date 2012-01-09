@@ -10,7 +10,7 @@ import javax.persistence.PersistenceContext;
 
 import org.diveintojee.poc.jbehave.domain.Advert;
 import org.diveintojee.poc.jbehave.persistence.AdvertDao;
-import org.diveintojee.poc.jbehave.persistence.JpaConstants;
+import org.diveintojee.poc.jbehave.persistence.PersistenceConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Repository;
 @Repository(AdvertDao.BEAN_ID)
 public class AdvertDaoImpl implements AdvertDao {
 
-	@PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
+	@PersistenceContext(unitName = PersistenceConstants.PERSISTANCE_UNIT_NAME)
 	private EntityManager	entityManager;
 
 	/**

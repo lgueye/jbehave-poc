@@ -1,0 +1,5 @@
+index:
+  store:
+    type: niofs
+path:
+  data: target/elasticsearch/data
