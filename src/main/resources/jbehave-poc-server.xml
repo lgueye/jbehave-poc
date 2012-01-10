@@ -58,23 +58,20 @@
 				<prop key="javax.persistence.jdbc.url">${javax.persistence.jdbc.url}</prop>
 				<prop key="javax.persistence.jdbc.user">${javax.persistence.jdbc.user}</prop>
 				<prop key="javax.persistence.jdbc.password">${javax.persistence.jdbc.password}</prop>
-				<prop key="javax.persistence.validation.group.pre-persist">org.diveintojee.poc.jbehave.domain.validation.Create
-				</prop>
-				<prop key="javax.persistence.validation.group.pre-update">org.diveintojee.poc.jbehave.domain.validation.Update
-				</prop>
-				<prop key="javax.persistence.validation.group.pre-remove">org.diveintojee.poc.jbehave.domain.validation.Delete
-				</prop>
-				<prop key="hibernate.ejb.event.pre-insert">org.hibernate.cfg.beanvalidation.BeanValidationEventListener
-				</prop>
-				<prop key="hibernate.ejb.event.pre-update">org.hibernate.cfg.beanvalidation.BeanValidationEventListener
-				</prop>
-				<prop key="hibernate.ejb.event.pre-delete">org.hibernate.cfg.beanvalidation.BeanValidationEventListener
-				</prop>
+				<prop key="javax.persistence.validation.group.pre-persist">org.diveintojee.poc.jbehave.domain.validation.Create</prop>
+				<prop key="javax.persistence.validation.group.pre-update">org.diveintojee.poc.jbehave.domain.validation.Update</prop>
+				<prop key="javax.persistence.validation.group.pre-remove">org.diveintojee.poc.jbehave.domain.validation.Delete</prop>
+				<prop key="hibernate.ejb.event.pre-insert">org.hibernate.cfg.beanvalidation.BeanValidationEventListener</prop>
+				<prop key="hibernate.ejb.event.pre-update">org.hibernate.cfg.beanvalidation.BeanValidationEventListener</prop>
+				<prop key="hibernate.ejb.event.pre-delete">org.hibernate.cfg.beanvalidation.BeanValidationEventListener</prop>
+				<prop key="hibernate.ejb.event.post-insert">org.hibernate.ejb.event.EJB3PostInsertEventListener,org.diveintojee.poc.jbehave.persistence.PostInsertEventListener</prop>
+				<prop key="hibernate.ejb.event.post-update">org.hibernate.ejb.event.EJB3PostUpdateEventListener,org.diveintojee.poc.jbehave.persistence.PostInsertEventListener</prop>
+				<prop key="hibernate.ejb.event.post-delete">org.hibernate.ejb.event.EJB3PostDeleteEventListener,org.diveintojee.poc.jbehave.persistence.PostDeleteEventListener</prop>
 			</props>
 		</property>
 	</bean>
 
-	<bean id="jsonMapper" class="org.codehaus.jackson.map.ObjectMapper"/>
-	
+	<bean id="jsonMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+
 </beans>
 
