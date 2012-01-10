@@ -31,7 +31,7 @@ public abstract class Utils {
         if (type == null)
             return null;
 
-        return type.getSimpleName().concat("s");
+        return minimize(type).concat("s");
 
     }
 
