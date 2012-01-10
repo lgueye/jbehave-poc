@@ -1,7 +1,7 @@
 Search story
 
 Meta:
-@progress wip
+@progress suspended
 
 Narrative:
 In order to provide search capabilities to my service

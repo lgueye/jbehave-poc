@@ -16,26 +16,26 @@ import org.springframework.stereotype.Component;
 @Component(AdvertToJsonByteArrayConverter.BEAN_ID)
 public class AdvertToJsonByteArrayConverter implements Converter<Advert, byte[]> {
 
-    public static final String BEAN_ID = "advertToJsonByteArrayConverter";
+	public static final String	BEAN_ID	= "advertToJsonByteArrayConverter";
 
-    @Autowired
-    private ObjectMapper jsonMapper;
+	@Autowired
+	private ObjectMapper		jsonMapper;
 
-    /**
-     * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
-     */
+	/**
+	 * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
+	 */
 
-    @Override
-    public byte[] convert(final Advert source) {
-        jsonMapper.getSerializationConfig().without(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-        String string;
-        try {
-            string = jsonMapper.writeValueAsString(source);
-        } catch (final Throwable th) {
-            throw new IllegalArgumentException(th);
-        }
-        // System.out.println("source as string = " + string);
-        return string.getBytes();
-    }
+	@Override
+	public byte[] convert(final Advert source) {
+		this.jsonMapper.getSerializationConfig().without(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+		String string;
+		try {
+			string = this.jsonMapper.writeValueAsString(source);
+		} catch (final Throwable th) {
+			throw new IllegalArgumentException(th);
+		}
+		// System.out.println("source as string = " + string);
+		return string.getBytes();
+	}
 
 }
