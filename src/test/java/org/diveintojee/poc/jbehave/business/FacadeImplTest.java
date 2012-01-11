@@ -16,6 +16,8 @@ import org.diveintojee.poc.jbehave.domain.Persistable;
 import org.diveintojee.poc.jbehave.domain.business.Facade;
 import org.diveintojee.poc.jbehave.domain.validation.ValidationContext;
 import org.diveintojee.poc.jbehave.persistence.BaseDao;
+import org.diveintojee.poc.jbehave.persistence.events.PostDeleteAdvertEvent;
+import org.diveintojee.poc.jbehave.persistence.events.PostStoreAdvertEvent;
 import org.hibernate.validator.engine.ConstraintViolationImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +26,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
+import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * @author louis.gueye@gmail.com
@@ -32,13 +34,16 @@ import org.mockito.MockitoAnnotations;
 public class FacadeImplTest {
 
 	@Mock
-	private Validator		validator;
+	private Validator					validator;
 
 	@Mock
-	private BaseDao			baseDao;
+	private BaseDao						baseDao;
+
+	@Mock
+	private ApplicationEventPublisher	eventPublisher;
 
 	@InjectMocks
-	private final Facade	underTest	= new FacadeImpl();
+	private final Facade				underTest	= new FacadeImpl();
 
 	@Test
 	public void createAdvertShouldInvokePersistence() {
@@ -51,8 +56,9 @@ public class FacadeImplTest {
 
 		// Then
 		Mockito.verify(this.baseDao).persist(advert);
-
+		Mockito.verify(this.eventPublisher).publishEvent(Matchers.any(PostStoreAdvertEvent.class));
 		Mockito.verify(advert).getId();
+		Mockito.verifyNoMoreInteractions(this.baseDao, this.eventPublisher, advert);
 
 	}
 
@@ -78,6 +84,8 @@ public class FacadeImplTest {
 
 		// Then
 		Mockito.verify(this.baseDao).delete(Advert.class, advertId);
+		Mockito.verify(this.eventPublisher).publishEvent(Matchers.any(PostDeleteAdvertEvent.class));
+		Mockito.verifyNoMoreInteractions(this.baseDao, this.eventPublisher);
 
 	}
 
@@ -153,24 +161,29 @@ public class FacadeImplTest {
 		// Given
 		final Advert advert = Mockito.mock(Advert.class);
 
-		final Advert persistedInstance = Mockito.mock(Advert.class);
+		// final Advert persistedInstance = Mockito.mock(Advert.class);
 
-		Mockito.when(this.baseDao.get(Matchers.eq(Advert.class), Matchers.any(Long.class))).thenReturn(
-				persistedInstance);
+		// Mockito.when(this.baseDao.get(Matchers.eq(Advert.class),
+		// Matchers.any(Long.class))).thenReturn(
+		// persistedInstance);
 
 		// When
 		this.underTest.updateAdvert(advert);
 
 		// Then
-		Mockito.verify(persistedInstance).setAddress(advert.getAddress());
+		// Mockito.verify(persistedInstance).setAddress(advert.getAddress());
+		//
+		// Mockito.verify(persistedInstance).setDescription(advert.getDescription());
+		//
+		// Mockito.verify(persistedInstance).setEmail(advert.getEmail());
+		//
+		// Mockito.verify(persistedInstance).setName(advert.getName());
+		//
+		// Mockito.verify(persistedInstance).setPhoneNumber(advert.getPhoneNumber());
 
-		Mockito.verify(persistedInstance).setDescription(advert.getDescription());
-
-		Mockito.verify(persistedInstance).setEmail(advert.getEmail());
-
-		Mockito.verify(persistedInstance).setName(advert.getName());
-
-		Mockito.verify(persistedInstance).setPhoneNumber(advert.getPhoneNumber());
+		Mockito.verify(this.baseDao).merge(advert);
+		Mockito.verify(this.eventPublisher).publishEvent(Matchers.any(PostStoreAdvertEvent.class));
+		Mockito.verifyNoMoreInteractions(this.baseDao, this.eventPublisher);
 
 	}
 
@@ -185,20 +198,22 @@ public class FacadeImplTest {
 
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void updateAdvertShouldThrowIllegalStateExceptionWithNullPersistedInstance() {
-
-		// Given
-		final Advert advert = new Advert();
-
-		advert.setId(3L);
-
-		Mockito.when(this.baseDao.get(Matchers.eq(Advert.class), Matchers.any(Long.class))).thenReturn(null);
-
-		// When
-		this.underTest.updateAdvert(advert);
-
-	}
+	// @Test(expected = IllegalStateException.class)
+	// public void
+	// updateAdvertShouldThrowIllegalStateExceptionWithNullPersistedInstance() {
+	//
+	// // Given
+	// final Advert advert = new Advert();
+	//
+	// advert.setId(3L);
+	//
+	// Mockito.when(this.baseDao.get(Matchers.eq(Advert.class),
+	// Matchers.any(Long.class))).thenReturn(null);
+	//
+	// // When
+	// this.underTest.updateAdvert(advert);
+	//
+	// }
 
 	@Test
 	public void validateWillNotThrowExceptionWithEmptyViolationsSet() {

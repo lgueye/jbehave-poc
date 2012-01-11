@@ -19,7 +19,10 @@ import org.diveintojee.poc.jbehave.domain.Advert;
 import org.diveintojee.poc.jbehave.domain.business.Facade;
 import org.diveintojee.poc.jbehave.domain.validation.ValidationContext;
 import org.diveintojee.poc.jbehave.persistence.BaseDao;
+import org.diveintojee.poc.jbehave.persistence.events.PostDeleteAdvertEvent;
+import org.diveintojee.poc.jbehave.persistence.events.PostStoreAdvertEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +36,13 @@ import com.google.common.base.Preconditions;
 public class FacadeImpl implements Facade {
 
 	@Autowired
-	private Validator	validator;
+	private Validator					validator;
 
 	@Autowired
-	private BaseDao		baseDao;
+	private BaseDao						baseDao;
+
+	@Autowired
+	private ApplicationEventPublisher	eventPublisher;
 
 	/**
 	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#createAdvert(org.diveintojee.poc.jbehave.domain.Advert)
@@ -48,6 +54,8 @@ public class FacadeImpl implements Facade {
 		Preconditions.checkArgument(advert != null, "Illegal call to createAdvert, advert is required");
 
 		this.baseDao.persist(advert);
+
+		this.eventPublisher.publishEvent(new PostStoreAdvertEvent(advert));
 
 		return advert.getId();
 
@@ -63,6 +71,8 @@ public class FacadeImpl implements Facade {
 		Preconditions.checkArgument(advertId != null, "Illegal call to deleteAdvert, advert identifier is required");
 
 		this.baseDao.delete(Advert.class, advertId);
+
+		this.eventPublisher.publishEvent(new PostDeleteAdvertEvent(new Advert(advertId)));
 
 	}
 
@@ -102,20 +112,25 @@ public class FacadeImpl implements Facade {
 
 		Preconditions.checkArgument(advert.getId() != null, "Illegal call to updateAdvert, advert.id is required");
 
-		final Advert persistedInstance = this.baseDao.get(Advert.class, advert.getId());
+		this.baseDao.merge(advert);
 
-		Preconditions.checkState(persistedInstance != null,
-				"Illegal call to updateAdvert, provided id should have corresponding advert in the store");
+		this.eventPublisher.publishEvent(new PostStoreAdvertEvent(advert));
 
-		persistedInstance.setAddress(advert.getAddress());
-
-		persistedInstance.setDescription(advert.getDescription());
-
-		persistedInstance.setEmail(advert.getEmail());
-
-		persistedInstance.setName(advert.getName());
-
-		persistedInstance.setPhoneNumber(advert.getPhoneNumber());
+		// final Advert persistedInstance = this.baseDao.get(Advert.class,
+		// advert.getId());
+		//
+		// Preconditions.checkState(persistedInstance != null,
+		// "Illegal call to updateAdvert, provided id should have corresponding advert in the store");
+		//
+		// persistedInstance.setAddress(advert.getAddress());
+		//
+		// persistedInstance.setDescription(advert.getDescription());
+		//
+		// persistedInstance.setEmail(advert.getEmail());
+		//
+		// persistedInstance.setName(advert.getName());
+		//
+		// persistedInstance.setPhoneNumber(advert.getPhoneNumber());
 
 	}
 
