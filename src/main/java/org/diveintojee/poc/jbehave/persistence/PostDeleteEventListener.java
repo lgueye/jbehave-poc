@@ -14,29 +14,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostDeleteEventListener implements org.hibernate.event.PostDeleteEventListener {
 
-    /**  */
-    private static final long serialVersionUID = 1L;
+	/**  */
+	private static final long	serialVersionUID	= 1L;
 
-    @Autowired
-    private SearchEngine searchEngine;
+	@Autowired
+	private SearchEngine		searchEngine;
 
-    /**
-     * @see org.hibernate.event.PostDeleteEventListener#onPostDelete(org.hibernate.event.PostDeleteEvent)
-     */
+	/**
+	 * @see org.hibernate.event.PostDeleteEventListener#onPostDelete(org.hibernate.event.PostDeleteEvent)
+	 */
 
-    @Override
-    public void onPostDelete(final PostDeleteEvent event) {
+	@Override
+	public void onPostDelete(final PostDeleteEvent event) {
 
-        if (event == null)
-            return;
+		if (event == null) return;
 
-        final Object entity = event.getEntity();
+		final Object entity = event.getEntity();
 
-        if (!(entity instanceof Advert) || entity == null || ((Advert) entity).getId() == null)
-            return;
+		if (entity == null || !(entity instanceof Advert) || ((Advert) entity).getId() == null) return;
 
-        searchEngine.removeFromIndex(Advert.class, ((Advert) entity).getId());
+		this.searchEngine.removeFromIndex(Advert.class, ((Advert) entity).getId());
 
-    }
+	}
 
 }

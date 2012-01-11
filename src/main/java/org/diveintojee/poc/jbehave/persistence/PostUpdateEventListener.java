@@ -4,7 +4,7 @@
 package org.diveintojee.poc.jbehave.persistence;
 
 import org.diveintojee.poc.jbehave.domain.Advert;
-import org.hibernate.event.PostInsertEvent;
+import org.hibernate.event.PostUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @author louis.gueye@gmail.com
  */
 @Component
-public class PostInsertEventListener implements org.hibernate.event.PostInsertEventListener {
+public class PostUpdateEventListener implements org.hibernate.event.PostUpdateEventListener {
 
 	/**  */
 	private static final long	serialVersionUID	= 1L;
@@ -20,12 +20,8 @@ public class PostInsertEventListener implements org.hibernate.event.PostInsertEv
 	@Autowired
 	private SearchEngine		searchEngine;
 
-	/**
-	 * @see org.hibernate.event.PostInsertEventListener#onPostInsert(org.hibernate.event.PostInsertEvent)
-	 */
-
 	@Override
-	public void onPostInsert(final PostInsertEvent event) {
+	public void onPostUpdate(final PostUpdateEvent event) {
 
 		if (event == null) return;
 
