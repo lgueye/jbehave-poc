@@ -3,14 +3,27 @@
  */
 package org.diveintojee.poc.jbehave.business;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.diveintojee.poc.jbehave.domain.Advert;
+import org.diveintojee.poc.jbehave.domain.Utils;
 import org.diveintojee.poc.jbehave.domain.business.Facade;
+import org.diveintojee.poc.jbehave.persistence.JsonByteArrayToAdvertConverter;
+import org.diveintojee.poc.jbehave.persistence.SearchEngine;
 import org.diveintojee.poc.jbehave.test.TestUtils;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -22,7 +35,30 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FacadeImplTestIT {
 
 	@Autowired
-	private Facade	facade;
+	private Facade						underTest;
+
+	@Autowired
+	private SearchEngine				searchEngine;
+
+	@Autowired
+	@Qualifier(JsonByteArrayToAdvertConverter.BEAN_ID)
+	private Converter<byte[], Advert>	jsonByteArrayToAdvertConverter;
+
+	@Before
+	public void before() {
+
+		assertNotNull(this.searchEngine);
+
+		// delete if already exists
+		if (this.searchEngine.getClient().admin().indices().prepareExists(Utils.pluralize(Advert.class)).execute()
+				.actionGet().exists()) this.searchEngine.getClient().admin().indices()
+				.prepareDelete(Utils.pluralize(Advert.class)).execute().actionGet();
+
+		// create it
+		this.searchEngine.getClient().admin().indices().prepareCreate(Utils.pluralize(Advert.class)).execute()
+				.actionGet();
+
+	}
 
 	@Test
 	public void createEntityShouldPersistAndSetId() throws Throwable {
@@ -31,7 +67,7 @@ public class FacadeImplTestIT {
 		// ensure id nullity
 		advert.setId(null);
 		// When
-		final Long id = this.facade.createAdvert(advert);
+		final Long id = this.underTest.createAdvert(advert);
 
 		// Then
 		Assert.assertNotNull(id);
@@ -45,7 +81,7 @@ public class FacadeImplTestIT {
 		Advert advert = TestUtils.validAdvert();
 		advert.setId(null);
 		// When
-		final Long id = this.facade.createAdvert(advert);
+		final Long id = this.underTest.createAdvert(advert);
 		// Then
 		Assert.assertNotNull(id);
 		Assert.assertEquals(id, advert.getId());
@@ -57,9 +93,9 @@ public class FacadeImplTestIT {
 		advert.setDescription(newDescription);
 
 		// When
-		this.facade.updateAdvert(advert);
+		this.underTest.updateAdvert(advert);
 
-		advert = this.facade.readAdvert(id);
+		advert = this.underTest.readAdvert(id);
 
 		// Then
 		Assert.assertEquals(newName, advert.getName());
@@ -73,16 +109,113 @@ public class FacadeImplTestIT {
 		Advert advert = TestUtils.validAdvert();
 		advert.setId(null);
 		// When
-		final Long id = this.facade.createAdvert(advert);
+		final Long id = this.underTest.createAdvert(advert);
 		// Then
 		Assert.assertNotNull(id);
 		Assert.assertEquals(id, advert.getId());
 
 		// When
-		this.facade.deleteAdvert(advert.getId());
+		this.underTest.deleteAdvert(advert.getId());
 
 		// Then
-		Assert.assertNull(this.facade.readAdvert(id));
+		Assert.assertNull(this.underTest.readAdvert(id));
+	}
+
+	@Test
+	public void crudOnDataShouldSucceed() {
+		final Long id = 8L;
+		int expectedHitsCount;
+		SearchResponse actualResponse;
+		Advert advert;
+		String reference;
+
+		// Given
+		expectedHitsCount = 0;
+		// When I search data by id
+		actualResponse = findById(id);
+		// Then I should get 0 hits
+		assertHitsCount(expectedHitsCount, actualResponse);
+
+		// Given I create that data
+		advert = new Advert();
+		advert.setEmail("test@test.com");
+		advert.setName("Bike to sell.");
+		advert.setDescription("Bike to sell. Nearly never used. You got a real deal here. 4500€");
+		this.underTest.createAdvert(advert);
+		expectedHitsCount = 1;
+		// When I search that data by id
+		actualResponse = findById(id);
+		// Then I should get 1 hit
+		assertHitsCount(expectedHitsCount, actualResponse);
+
+		// Given a reference
+		reference = "REF-0000-54-ADV";
+		expectedHitsCount = 1;
+		// When I update the name of the data
+		advert.setReference(reference);
+		// And I reindex that data
+		this.underTest.updateAdvert(advert);
+		// And I search that data by id
+		actualResponse = findById(id);
+		// Then the name should be modified
+		assertHitsCount(expectedHitsCount, actualResponse);
+		advert = extractAdvertFromResponse(actualResponse);
+		assertEquals(reference, advert.getReference());
+
+		// Given I delete a data from the index
+		this.underTest.deleteAdvert(id);
+		expectedHitsCount = 0;
+		// When I search that data by id
+		actualResponse = findById(id);
+		// Then I should get 0 hit
+		assertHitsCount(expectedHitsCount, actualResponse);
+
+	}
+
+	private SearchResponse findById(final Long id) {
+		return this.searchEngine.getClient().prepareSearch(Utils.pluralize(Advert.class))
+				.setTypes(Utils.minimize(Advert.class))
+				.setQuery(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("_id", id))).execute().actionGet();
+	}
+
+	/**
+	 * @param actualResponse
+	 * @return
+	 */
+	private Advert extractAdvertFromResponse(final SearchResponse actualResponse) {
+
+		assertNotNull(actualResponse);
+
+		assertNotNull(actualResponse.getHits());
+
+		final SearchHits hits = actualResponse.getHits();
+
+		assertEquals(1, hits.getTotalHits());
+
+		final SearchHit hit = hits.getHits()[0];
+
+		assertNotNull(hit);
+
+		assertNotNull(hit.source());
+
+		final Advert advert = this.jsonByteArrayToAdvertConverter.convert(hit.source());
+
+		return advert;
+
+	}
+
+	private void assertHitsCount(final int expectedHitsCount, final SearchResponse actualResponse) {
+
+		assertNotNull(actualResponse);
+
+		final SearchHits hits = actualResponse.getHits();
+
+		assertNotNull(hits);
+
+		final int totalHits = (int) hits.getTotalHits();
+
+		assertTrue(expectedHitsCount == totalHits);
+
 	}
 
 }

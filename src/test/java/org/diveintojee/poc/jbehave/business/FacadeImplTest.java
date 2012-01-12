@@ -161,25 +161,8 @@ public class FacadeImplTest {
 		// Given
 		final Advert advert = Mockito.mock(Advert.class);
 
-		// final Advert persistedInstance = Mockito.mock(Advert.class);
-
-		// Mockito.when(this.baseDao.get(Matchers.eq(Advert.class),
-		// Matchers.any(Long.class))).thenReturn(
-		// persistedInstance);
-
 		// When
 		this.underTest.updateAdvert(advert);
-
-		// Then
-		// Mockito.verify(persistedInstance).setAddress(advert.getAddress());
-		//
-		// Mockito.verify(persistedInstance).setDescription(advert.getDescription());
-		//
-		// Mockito.verify(persistedInstance).setEmail(advert.getEmail());
-		//
-		// Mockito.verify(persistedInstance).setName(advert.getName());
-		//
-		// Mockito.verify(persistedInstance).setPhoneNumber(advert.getPhoneNumber());
 
 		Mockito.verify(this.baseDao).merge(advert);
 		Mockito.verify(this.eventPublisher).publishEvent(Matchers.any(PostStoreAdvertEvent.class));
@@ -197,23 +180,6 @@ public class FacadeImplTest {
 		this.underTest.updateAdvert(advert);
 
 	}
-
-	// @Test(expected = IllegalStateException.class)
-	// public void
-	// updateAdvertShouldThrowIllegalStateExceptionWithNullPersistedInstance() {
-	//
-	// // Given
-	// final Advert advert = new Advert();
-	//
-	// advert.setId(3L);
-	//
-	// Mockito.when(this.baseDao.get(Matchers.eq(Advert.class),
-	// Matchers.any(Long.class))).thenReturn(null);
-	//
-	// // When
-	// this.underTest.updateAdvert(advert);
-	//
-	// }
 
 	@Test
 	public void validateWillNotThrowExceptionWithEmptyViolationsSet() {
