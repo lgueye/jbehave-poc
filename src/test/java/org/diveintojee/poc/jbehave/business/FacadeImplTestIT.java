@@ -92,28 +92,21 @@ public class FacadeImplTestIT {
 
     @Test
     public void crudOnDataShouldSucceed() {
-        final Long id = 8L;
+        Long id;
         int expectedHitsCount;
         SearchResponse actualResponse;
         Advert advert;
         String reference;
-
-        // Given
-        expectedHitsCount = 0;
-        // When I search data by id
-        actualResponse = findById(id);
-        // Then I should get 0 hits
-        assertHitsCount(expectedHitsCount, actualResponse);
 
         // Given I create that data
         advert = TestUtils.validAdvert();
         advert.setEmail("test@test.com");
         advert.setName("Bike to sell.");
         advert.setDescription("Bike to sell. Nearly never used. You got a real deal here. 4500€");
-        underTest.createAdvert(advert);
+        id = underTest.createAdvert(advert);
         expectedHitsCount = 1;
         // When I search that data by id
-        actualResponse = findById(id);
+        actualResponse = findById(advert.getId());
         // Then I should get 1 hit
         assertHitsCount(expectedHitsCount, actualResponse);
 

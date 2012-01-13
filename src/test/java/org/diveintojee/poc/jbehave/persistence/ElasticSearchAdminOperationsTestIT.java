@@ -1,30 +1,41 @@
 package org.diveintojee.poc.jbehave.persistence;
 
-import static org.junit.Assert.assertNotNull;
+import static org.elasticsearch.common.settings.ImmutableSettings.settingsBuilder;
 import static org.junit.Assert.fail;
 
 import org.diveintojee.poc.jbehave.domain.Advert;
 import org.diveintojee.poc.jbehave.domain.Utils;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.indices.IndexMissingException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class })
 @ContextConfiguration("classpath:jbehave-poc-server.xml")
-public class ElasticSearchAdminOperationsTestIT extends AbstractJUnit4SpringContextTests {
+public class ElasticSearchAdminOperationsTestIT extends AbstractNodesTests {
 
-    @Autowired
     private Client underTest;
 
+    @After
+    public void closeNodes() {
+        underTest.close();
+        closeAllNodes();
+    }
+
     @Before
-    public void before() {
-        assertNotNull(underTest);
-        if (underTest.admin().indices().prepareExists(Utils.pluralize(Advert.class)).execute().actionGet().exists()) {
-            underTest.admin().indices().prepareDelete(Utils.pluralize(Advert.class)).execute().actionGet();
-        }
+    public void createNodes() throws Exception {
+        final Settings settings = settingsBuilder().put("number_of_shards", 3).put("number_of_replicas", 0).build();
+        startNode(ElasticSearchAdminOperationsTestIT.class.getSimpleName(), settings);
+        underTest = getClient();
     }
 
     @Test
@@ -54,5 +65,9 @@ public class ElasticSearchAdminOperationsTestIT extends AbstractJUnit4SpringCont
             // Then I should fail because the index was deleted
         }
 
+    }
+
+    protected Client getClient() {
+        return client(ElasticSearchAdminOperationsTestIT.class.getSimpleName());
     }
 }
