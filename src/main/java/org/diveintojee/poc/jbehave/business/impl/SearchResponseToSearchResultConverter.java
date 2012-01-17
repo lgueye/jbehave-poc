@@ -20,34 +20,34 @@ import org.springframework.stereotype.Component;
 @Component(SearchResponseToSearchResultConverter.BEAN_ID)
 public class SearchResponseToSearchResultConverter implements Converter<SearchResponse, SearchResult> {
 
-	public static final String			BEAN_ID	= "searchResponseToSearchResultConverter";
+    public static final String BEAN_ID = "searchResponseToSearchResultConverter";
 
-	@Autowired
-	@Qualifier(JsonByteArrayToAdvertConverter.BEAN_ID)
-	private Converter<byte[], Advert>	jsonByteArrayToadvertConverter;
+    @Autowired
+    @Qualifier(JsonByteArrayToAdvertConverter.BEAN_ID)
+    private Converter<byte[], Advert> jsonByteArrayToadvertConverter;
 
-	/**
-	 * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
-	 */
-	@Override
-	public SearchResult convert(SearchResponse source) {
+    /**
+     * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
+     */
+    @Override
+    public SearchResult convert(final SearchResponse source) {
 
-		SearchResult result = new SearchResult();
+        final SearchResult result = new SearchResult();
 
-		SearchHits hits = source.getHits();
+        final SearchHits hits = source.getHits();
 
-		result.setTotalHits(hits.getTotalHits());
+        result.setTotalHits(hits.getTotalHits());
 
-		for ( SearchHit searchHit : source.getHits().getHits() ) {
+        for (final SearchHit searchHit : hits.getHits()) {
 
-			Advert advert = this.jsonByteArrayToadvertConverter.convert(searchHit.source());
+            final Advert advert = jsonByteArrayToadvertConverter.convert(searchHit.source());
 
-			result.addItem(advert);
+            result.addItem(advert);
 
-		}
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
 }
