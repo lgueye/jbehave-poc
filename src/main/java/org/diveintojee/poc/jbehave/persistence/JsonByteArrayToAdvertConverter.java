@@ -29,6 +29,9 @@ public class JsonByteArrayToAdvertConverter implements Converter<byte[], Advert>
 
 	@Override
 	public Advert convert(final byte[] source) {
+
+		if (source == null || source.length == 0) return null;
+
 		try {
 			this.jsonMapper.getDeserializationConfig()
 					.without(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -38,6 +41,7 @@ public class JsonByteArrayToAdvertConverter implements Converter<byte[], Advert>
 		} catch (final IOException ignored) {
 			throw new IllegalStateException(ignored);
 		}
+
 	}
 
 }

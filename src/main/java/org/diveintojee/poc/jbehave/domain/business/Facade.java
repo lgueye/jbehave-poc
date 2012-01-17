@@ -4,11 +4,14 @@
 package org.diveintojee.poc.jbehave.domain.business;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
 import org.diveintojee.poc.jbehave.domain.AbstractEntity;
 import org.diveintojee.poc.jbehave.domain.Advert;
+import org.diveintojee.poc.jbehave.domain.OrderBy;
+import org.diveintojee.poc.jbehave.domain.SearchResult;
 import org.diveintojee.poc.jbehave.domain.validation.ValidationContext;
 
 /**
@@ -71,6 +74,6 @@ public interface Facade {
 	 * @param itemsPerPage
 	 * @return
 	 */
-	List<Advert> findAdvertsByCriteria(String query, String sort, int from, int itemsPerPage);
+	SearchResult findAdvertsByCriteria(String queryString, Set<OrderBy> orderByList, int startPage, int itemsPerPage);
 
 }

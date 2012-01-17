@@ -5,6 +5,7 @@ package org.diveintojee.poc.jbehave.web;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.diveintojee.poc.jbehave.domain.Advert;
+import org.diveintojee.poc.jbehave.domain.SearchResult;
 import org.diveintojee.poc.jbehave.domain.business.Facade;
 import org.diveintojee.poc.jbehave.domain.exceptions.NotFoundException;
 import org.slf4j.Logger;
@@ -91,7 +93,9 @@ public class AdvertController {
 		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
 		};
 
-		if (CollectionUtils.isEmpty(results)) AdvertController.LOGGER.info("No results found");
+		if (CollectionUtils.isEmpty(results)) {
+			AdvertController.LOGGER.info("No results found");
+		}
 
 		return Response.ok(entity).build();
 
@@ -118,18 +122,13 @@ public class AdvertController {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response findByCriteria(//
 			@QueryParam(value = "query") final String query, //
-			@QueryParam(value = "sort") final String sort,//
+			@QueryParam(value = "sort") final Set<String> sort,//
 			@QueryParam(value = "from") final int from, //
 			@QueryParam(value = "itemsPerPage") final int itemsPerPage) throws Throwable {//
 
-		final List<Advert> results = this.facade.findAdvertsByCriteria(query, sort, from, itemsPerPage);
+		final SearchResult results = this.facade.findAdvertsByCriteria(query, null, from, itemsPerPage);
 
-		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
-		};
-
-		if (CollectionUtils.isEmpty(results)) AdvertController.LOGGER.info("No results found");
-
-		return Response.ok(entity).build();
+		return Response.ok(results).build();
 
 	}
 
@@ -161,7 +160,9 @@ public class AdvertController {
 		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
 		};
 
-		if (CollectionUtils.isEmpty(results)) AdvertController.LOGGER.info("No results found");
+		if (CollectionUtils.isEmpty(results)) {
+			AdvertController.LOGGER.info("No results found");
+		}
 
 		return Response.ok(entity).build();
 

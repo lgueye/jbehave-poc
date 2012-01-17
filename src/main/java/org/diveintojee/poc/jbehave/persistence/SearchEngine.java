@@ -4,6 +4,7 @@
 package org.diveintojee.poc.jbehave.persistence;
 
 import org.diveintojee.poc.jbehave.domain.SearchQuery;
+import org.diveintojee.poc.jbehave.domain.SearchResult;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 
@@ -12,29 +13,36 @@ import org.elasticsearch.client.Client;
  */
 public interface SearchEngine {
 
-    /**
-     * @param type
-     * @param id
-     * @return
-     */
-    SearchResponse findById(Class<?> type, Long id);
+	public static String	CLAUSES_SEPARATOR	= "#";
 
-    /**
-     * @return
-     */
-    Client getClient();
+	/**
+	 * @param type
+	 * @param id
+	 * @return
+	 */
+	SearchResponse findById(Class<?> type, Long id);
 
-    /**
-     * @param type
-     * @param document
-     */
-    void index(Class<?> type, Object document);
+	/**
+	 * @return
+	 */
+	Client getClient();
 
-    /**
-     * @param type
-     * @param id
-     */
-    void removeFromIndex(Class<?> type, Long id);
+	/**
+	 * @param type
+	 * @param document
+	 */
+	void index(Class<?> type, Object document);
 
-    SearchResponse search(SearchQuery searchQuery);
+	/**
+	 * @param type
+	 * @param id
+	 */
+	void removeFromIndex(Class<?> type, Long id);
+
+	/**
+	 * @param searchQuery
+	 * @return
+	 */
+	SearchResult search(SearchQuery searchQuery);
+
 }

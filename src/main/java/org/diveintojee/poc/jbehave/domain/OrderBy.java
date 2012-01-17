@@ -3,78 +3,73 @@
  */
 package org.diveintojee.poc.jbehave.domain;
 
-
 /**
  * @author louis.gueye@gmail.com
  */
 public class OrderBy extends AbstractObject {
 
-    public static final String DEFAULT_FIELD = "id";
+	public static final String	DEFAULT_FIELD	= "id";
 
-    private SortDirection sortDirection;
+	public static final OrderBy	DEFAULT			= new OrderBy(DEFAULT_FIELD, SortDirection.DESC);
 
-    private String field;
+	private SortDirection		sortDirection;
 
-    /**
-     * @param sortDirection
-     * @param field
-     */
-    public OrderBy(final SortDirection sortDirection, final String field) {
-        super();
-        this.sortDirection = sortDirection;
-        this.field = field;
-    }
+	private String				field;
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+	/**
+	 * @param sortDirection
+	 * @param field
+	 */
+	public OrderBy(final String field, final SortDirection sortDirection) {
+		super();
+		this.sortDirection = sortDirection;
+		this.field = field;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final OrderBy other = (OrderBy) obj;
-        if (field == null) {
-            if (other.field != null)
-                return false;
-        } else if (!field.equals(other.field))
-            return false;
-        if (sortDirection != other.sortDirection)
-            return false;
-        return true;
-    }
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 
-    public String getField() {
-        return field;
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		final OrderBy other = (OrderBy) obj;
+		if (this.field == null) {
+			if (other.field != null) return false;
+		} else if (!this.field.equals(other.field)) return false;
+		if (this.sortDirection != other.sortDirection) return false;
+		return true;
+	}
 
-    public SortDirection getSortDirection() {
-        return sortDirection;
-    }
+	public String getField() {
+		return this.field;
+	}
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+	public SortDirection getSortDirection() {
+		return this.sortDirection;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (field == null ? 0 : field.hashCode());
-        result = prime * result + (sortDirection == null ? 0 : sortDirection.hashCode());
-        return result;
-    }
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
 
-    public void setField(final String field) {
-        this.field = field;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (this.field == null ? 0 : this.field.hashCode());
+		result = prime * result + (this.sortDirection == null ? 0 : this.sortDirection.hashCode());
+		return result;
+	}
 
-    public void setSortDirection(final SortDirection sortDirection) {
-        this.sortDirection = sortDirection;
-    }
+	public void setField(final String field) {
+		this.field = field;
+	}
+
+	public void setSortDirection(final SortDirection sortDirection) {
+		this.sortDirection = sortDirection;
+	}
 
 }

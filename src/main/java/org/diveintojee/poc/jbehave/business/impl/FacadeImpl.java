@@ -16,9 +16,13 @@ import javax.validation.Validator;
 import org.apache.commons.collections.CollectionUtils;
 import org.diveintojee.poc.jbehave.domain.AbstractEntity;
 import org.diveintojee.poc.jbehave.domain.Advert;
+import org.diveintojee.poc.jbehave.domain.OrderBy;
+import org.diveintojee.poc.jbehave.domain.SearchQuery;
+import org.diveintojee.poc.jbehave.domain.SearchResult;
 import org.diveintojee.poc.jbehave.domain.business.Facade;
 import org.diveintojee.poc.jbehave.domain.validation.ValidationContext;
 import org.diveintojee.poc.jbehave.persistence.BaseDao;
+import org.diveintojee.poc.jbehave.persistence.SearchEngine;
 import org.diveintojee.poc.jbehave.persistence.events.PostDeleteAdvertEvent;
 import org.diveintojee.poc.jbehave.persistence.events.PostStoreAdvertEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,139 +39,149 @@ import com.google.common.base.Preconditions;
 @Service(Facade.BEAN_ID)
 public class FacadeImpl implements Facade {
 
-    @Autowired
-    private Validator validator;
+	@Autowired
+	private Validator					validator;
 
-    @Autowired
-    private BaseDao baseDao;
+	@Autowired
+	private BaseDao						baseDao;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+	@Autowired
+	private ApplicationEventPublisher	eventPublisher;
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#createAdvert(org.diveintojee.poc.jbehave.domain.Advert)
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Long createAdvert(final Advert advert) {
+	@Autowired
+	SearchEngine						searchEngine;
 
-        Preconditions.checkArgument(advert != null, "Illegal call to createAdvert, advert is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#createAdvert(org.diveintojee.poc.jbehave.domain.Advert)
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Long createAdvert(final Advert advert) {
 
-        baseDao.persist(advert);
+		Preconditions.checkArgument(advert != null, "Illegal call to createAdvert, advert is required");
 
-        eventPublisher.publishEvent(new PostStoreAdvertEvent(advert));
+		this.baseDao.persist(advert);
 
-        return advert.getId();
+		this.eventPublisher.publishEvent(new PostStoreAdvertEvent(advert));
 
-    }
+		return advert.getId();
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#deleteAdvert(java.lang.Long)
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void deleteAdvert(final Long advertId) {
+	}
 
-        Preconditions.checkArgument(advertId != null, "Illegal call to deleteAdvert, advert identifier is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#deleteAdvert(java.lang.Long)
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void deleteAdvert(final Long advertId) {
 
-        baseDao.delete(Advert.class, advertId);
+		Preconditions.checkArgument(advertId != null, "Illegal call to deleteAdvert, advert identifier is required");
 
-        eventPublisher.publishEvent(new PostDeleteAdvertEvent(new Advert(advertId)));
+		this.baseDao.delete(Advert.class, advertId);
 
-    }
+		this.eventPublisher.publishEvent(new PostDeleteAdvertEvent(new Advert(advertId)));
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#findAdvertsByCriteria(org.diveintojee.poc.jbehave.domain.Advert)
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<Advert> findAdvertsByCriteria(final Advert criteria) {
+	}
 
-        Preconditions.checkArgument(criteria != null, "Illegal call to findAdvertsByCriteria, criteria is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#findAdvertsByCriteria(org.diveintojee.poc.jbehave.domain.Advert)
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public List<Advert> findAdvertsByCriteria(final Advert criteria) {
 
-        return baseDao.findByExample(criteria);
+		Preconditions.checkArgument(criteria != null, "Illegal call to findAdvertsByCriteria, criteria is required");
 
-    }
+		return this.baseDao.findByExample(criteria);
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#findAdvertsByCriteria(java.lang.String, java.lang.String,
-     *      int, int, int)
-     */
-    @Override
-    public List<Advert> findAdvertsByCriteria(final String query, final String sort, final int from,
-            final int itemsPerPage) {
-        throw new UnsupportedOperationException();
-    }
+	}
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#findProtectedAdvertsByCriteria(org.diveintojee.poc.jbehave.domain.Advert)
-     */
-    @RolesAllowed("ROLE_ADMIN")
-    @Override
-    public List<Advert> findProtectedAdvertsByCriteria(final Advert criteria) {
-        return Collections.emptyList();
-    }
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#findAdvertsByCriteria(java.lang.String,
+	 *      java.util.Set, int, int)
+	 */
+	@Override
+	public SearchResult findAdvertsByCriteria(final String queryString, final Set<OrderBy> orderByList,
+			final int startPage, final int itemsPerPage) {
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#readAdvert(java.lang.Long)
-     */
-    @Override
-    public Advert readAdvert(final Long advertId) {
+		SearchQuery searchQuery = new SearchQuery(queryString, orderByList, startPage, itemsPerPage);
 
-        Preconditions.checkArgument(advertId != null, "Illegal call to readAdvert, advert identifier is required");
+		SearchResult searchResult = this.searchEngine.search(searchQuery);
 
-        return baseDao.get(Advert.class, advertId);
+		searchResult.setSearchQuery(searchQuery);
 
-    }
+		return searchResult;
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#updateAdvert(org.diveintojee.poc.jbehave.domain.Advert)
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void updateAdvert(final Advert advert) {
+	}
 
-        Preconditions.checkArgument(advert != null, "Illegal call to updateAdvert, advert is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#findProtectedAdvertsByCriteria(org.diveintojee.poc.jbehave.domain.Advert)
+	 */
+	@RolesAllowed("ROLE_ADMIN")
+	@Override
+	public List<Advert> findProtectedAdvertsByCriteria(final Advert criteria) {
+		return Collections.emptyList();
+	}
 
-        Preconditions.checkArgument(advert.getId() != null, "Illegal call to updateAdvert, advert.id is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#readAdvert(java.lang.Long)
+	 */
+	@Override
+	public Advert readAdvert(final Long advertId) {
 
-        baseDao.merge(advert);
+		Preconditions.checkArgument(advertId != null, "Illegal call to readAdvert, advert identifier is required");
 
-        eventPublisher.publishEvent(new PostStoreAdvertEvent(advert));
+		return this.baseDao.get(Advert.class, advertId);
 
-    }
+	}
 
-    /**
-     * @see org.diveintojee.poc.jbehave.domain.business.Facade#validate(org.diveintojee.poc.jbehave.domain.AbstractEntity,
-     *      org.diveintojee.poc.jbehave.domain.validation.ValidationContext)
-     */
-    @Override
-    public <T extends AbstractEntity> void validate(final T type, final ValidationContext context) {
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#updateAdvert(org.diveintojee.poc.jbehave.domain.Advert)
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void updateAdvert(final Advert advert) {
 
-        Preconditions.checkArgument(type != null, "Illegal call to validate, object is required");
+		Preconditions.checkArgument(advert != null, "Illegal call to updateAdvert, advert is required");
 
-        Preconditions.checkArgument(context != null, "Illegal call to validate, validation context is required");
+		Preconditions.checkArgument(advert.getId() != null, "Illegal call to updateAdvert, advert.id is required");
 
-        final Set<ConstraintViolation<T>> constraintViolations = validator.validate(type, context.getContext());
+		this.baseDao.merge(advert);
 
-        if (CollectionUtils.isEmpty(constraintViolations))
-            return;
+		this.eventPublisher.publishEvent(new PostStoreAdvertEvent(advert));
 
-        final Set<ConstraintViolation<?>> propagatedViolations = new HashSet<ConstraintViolation<?>>(
-                constraintViolations.size());
+	}
 
-        final Set<String> classNames = new HashSet<String>();
+	/**
+	 * @see org.diveintojee.poc.jbehave.domain.business.Facade#validate(org.diveintojee.poc.jbehave.domain.AbstractEntity,
+	 *      org.diveintojee.poc.jbehave.domain.validation.ValidationContext)
+	 */
+	@Override
+	public <T extends AbstractEntity> void validate(final T type, final ValidationContext context) {
 
-        for (final ConstraintViolation<?> violation : constraintViolations) {
+		Preconditions.checkArgument(type != null, "Illegal call to validate, object is required");
 
-            propagatedViolations.add(violation);
+		Preconditions.checkArgument(context != null, "Illegal call to validate, validation context is required");
 
-            classNames.add(violation.getLeafBean().getClass().getName());
+		final Set<ConstraintViolation<T>> constraintViolations = this.validator.validate(type, context.getContext());
 
-        }
+		if (CollectionUtils.isEmpty(constraintViolations)) return;
 
-        throw new ConstraintViolationException(propagatedViolations);
+		final Set<ConstraintViolation<?>> propagatedViolations = new HashSet<ConstraintViolation<?>>(
+				constraintViolations.size());
 
-    }
+		final Set<String> classNames = new HashSet<String>();
+
+		for ( final ConstraintViolation<?> violation : constraintViolations ) {
+
+			propagatedViolations.add(violation);
+
+			classNames.add(violation.getLeafBean().getClass().getName());
+
+		}
+
+		throw new ConstraintViolationException(propagatedViolations);
+
+	}
 
 }
