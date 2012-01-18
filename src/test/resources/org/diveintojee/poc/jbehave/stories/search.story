@@ -25,6 +25,5 @@ Then tear down
 
 Examples:
 |responseContentType|
-|application/xml|
 |application/json|
 

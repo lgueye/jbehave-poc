@@ -50,286 +50,283 @@ import com.google.common.collect.Collections2;
 @Component
 public class SearchEngineImpl implements SearchEngine {
 
-    @Autowired
-    private Client elasticSearchClient;
+	@Autowired
+	private Client									elasticSearchClient;
 
-    @Autowired
-    @Qualifier(AdvertToJsonByteArrayConverter.BEAN_ID)
-    private AdvertToJsonByteArrayConverter advertToJsonByteArrayConverter;
+	@Autowired
+	@Qualifier(AdvertToJsonByteArrayConverter.BEAN_ID)
+	private AdvertToJsonByteArrayConverter			advertToJsonByteArrayConverter;
 
-    @Autowired
-    @Qualifier(SearchResponseToSearchResultConverter.BEAN_ID)
-    private SearchResponseToSearchResultConverter searchResponseToSearchResultConverter;
+	@Autowired
+	@Qualifier(SearchResponseToSearchResultConverter.BEAN_ID)
+	private SearchResponseToSearchResultConverter	searchResponseToSearchResultConverter;
 
-    /**
-     * @param searchRequestBuilder
-     */
-    void applyDefaultSort(final SearchRequestBuilder searchRequestBuilder) {
+	/**
+	 * @param searchRequestBuilder
+	 */
+	void applyDefaultSort(final SearchRequestBuilder searchRequestBuilder) {
 
-        searchRequestBuilder.addSort(OrderBy.DEFAULT_FIELD, SortOrder.DESC);
+		searchRequestBuilder.addSort(OrderBy.DEFAULT_FIELD, SortOrder.DESC);
 
-    }
+	}
 
-    void applySort(final SearchRequestBuilder searchRequestBuilder, final Set<OrderBy> orderByList) {
+	void applySort(final SearchRequestBuilder searchRequestBuilder, final Set<OrderBy> orderByList) {
 
-        if (CollectionUtils.isNotEmpty(orderByList)) {
+		if (CollectionUtils.isNotEmpty(orderByList)) {
 
-            for (final OrderBy orderBy : orderByList) {
+			for ( final OrderBy orderBy : orderByList ) {
 
-                searchRequestBuilder.addSort(orderBy.getField(),
-                    orderBy.getSortDirection() == SortDirection.ASC ? SortOrder.ASC : SortOrder.DESC);
+				searchRequestBuilder.addSort(orderBy.getField(),
+						orderBy.getSortDirection() == SortDirection.ASC ? SortOrder.ASC : SortOrder.DESC);
 
-            }
+			}
 
-        }
+		}
 
-        if (orderSpecificationDoesntContainDefaultSortField(orderByList)) {
+		if (orderSpecificationDoesntContainDefaultSortField(orderByList)) {
 
-            applyDefaultSort(searchRequestBuilder);
+			applyDefaultSort(searchRequestBuilder);
 
-        }
+		}
 
-    }
+	}
 
-    /**
-     * @param query
-     * @return
-     */
-    SearchRequestBuilder convertSearchQueryToRequestBuilder(final SearchQuery query) {
+	/**
+	 * @param query
+	 * @return
+	 */
+	SearchRequestBuilder convertSearchQueryToRequestBuilder(final SearchQuery query) {
 
-        final SearchRequestBuilder searchRequestBuilder = elasticSearchClient.prepareSearch(
-            Utils.pluralize(Advert.class))//
-                .setTypes(Utils.minimize(Advert.class));
+		final SearchRequestBuilder searchRequestBuilder = this.elasticSearchClient.prepareSearch(
+				Utils.pluralize(Advert.class))//
+				.setTypes(Utils.minimize(Advert.class));
 
-        if (query == null)
-            return searchRequestBuilder;
+		if (query == null) return searchRequestBuilder;
 
-        searchRequestBuilder.setFrom(query.getStartPage() - 1);
+		searchRequestBuilder.setFrom(query.getStartPage() - 1);
 
-        searchRequestBuilder.setSize(query.getItemsPerPage());
+		if (query.getItemsPerPage() > 0) {
 
-        final List<String> clauses = extractSearchClauses(query.getQueryString());
+			searchRequestBuilder.setSize(query.getItemsPerPage());
 
-        final QueryBuilder queryBuilder = resolveQueryBuilder(clauses);
+		}
 
-        if (searchRequestBuilder != null) {
+		final List<String> clauses = extractSearchClauses(query.getQueryString());
 
-            searchRequestBuilder.setQuery(queryBuilder);
+		final QueryBuilder queryBuilder = resolveQueryBuilder(clauses);
 
-        }
+		if (searchRequestBuilder != null) {
 
-        applySort(searchRequestBuilder, query.getOrderByList());
+			searchRequestBuilder.setQuery(queryBuilder);
 
-        return searchRequestBuilder;
+		}
 
-    }
+		applySort(searchRequestBuilder, query.getOrderByList());
 
-    /**
-     * @param queryString
-     * @return
-     */
-    List<String> extractSearchClauses(final String queryString) {
+		return searchRequestBuilder;
 
-        if (StringUtils.isEmpty(queryString))
-            return null;
+	}
 
-        final List<String> clauses = Arrays.asList(queryString.split(CLAUSES_SEPARATOR));
+	/**
+	 * @param queryString
+	 * @return
+	 */
+	List<String> extractSearchClauses(final String queryString) {
 
-        final Collection<String> cleanClauses = Collections2.filter(clauses, new Predicate<String>() {
+		if (StringUtils.isEmpty(queryString)) return null;
 
-            /**
-             * @see com.google.common.base.Predicate#apply(java.lang.Object)
-             */
-            @Override
-            public boolean apply(final String input) {
-                return StringUtils.isNotEmpty(input)//
-                    && !input.trim().equals(SearchOperator.EXACT_MATCH_OPERATOR.toString())//
-                    && !input.trim().equals(SearchOperator.FULL_TEXT_OPERATOR.toString()) //
-                    && !input.trim().endsWith(SearchOperator.EXACT_MATCH_OPERATOR.toString())//
-                    && !input.trim().endsWith(SearchOperator.FULL_TEXT_OPERATOR.toString());
-            }
+		final List<String> clauses = Arrays.asList(queryString.split(CLAUSES_SEPARATOR));
 
-        });
+		final Collection<String> cleanClauses = Collections2.filter(clauses, new Predicate<String>() {
 
-        return new ArrayList<String>(cleanClauses);
+			/**
+			 * @see com.google.common.base.Predicate#apply(java.lang.Object)
+			 */
+			@Override
+			public boolean apply(final String input) {
+				return StringUtils.isNotEmpty(input)//
+						&& !input.trim().equals(SearchOperator.EXACT_MATCH_OPERATOR.toString())//
+						&& !input.trim().equals(SearchOperator.FULL_TEXT_OPERATOR.toString()) //
+						&& !input.trim().endsWith(SearchOperator.EXACT_MATCH_OPERATOR.toString())//
+						&& !input.trim().endsWith(SearchOperator.FULL_TEXT_OPERATOR.toString());
+			}
 
-    }
+		});
 
-    /**
-     * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#findById(java.lang.String, java.lang.Class,
-     *      java.lang.Long)
-     */
-    @Override
-    public SearchResponse findById(final Class<?> type, final Long id) {
+		return new ArrayList<String>(cleanClauses);
 
-        Preconditions.checkArgument(type != null, "type is required");
+	}
 
-        Preconditions.checkArgument(id != null, "id is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#findById(java.lang.String,
+	 *      java.lang.Class, java.lang.Long)
+	 */
+	@Override
+	public SearchResponse findById(final Class<?> type, final Long id) {
 
-        final TermQueryBuilder idClause = QueryBuilders.termQuery("_id", id);
+		Preconditions.checkArgument(type != null, "type is required");
 
-        final QueryBuilder builder = QueryBuilders.boolQuery().must(idClause);
+		Preconditions.checkArgument(id != null, "id is required");
 
-        return elasticSearchClient.prepareSearch(Utils.pluralize(type)).setTypes(Utils.minimize(type))
-                .setQuery(builder).execute().actionGet();
-    }
+		final TermQueryBuilder idClause = QueryBuilders.termQuery("_id", id);
 
-    /**
-     * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#getClient()
-     */
-    @Override
-    public Client getClient() {
-        return elasticSearchClient;
-    }
+		final QueryBuilder builder = QueryBuilders.boolQuery().must(idClause);
 
-    /**
-     * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#index(java.lang.String, java.lang.Class,
-     *      java.lang.Object)
-     */
-    @Override
-    public void index(final Class<?> type, final Object document) {
+		return this.elasticSearchClient.prepareSearch(Utils.pluralize(type)).setTypes(Utils.minimize(type))
+				.setQuery(builder).execute().actionGet();
+	}
 
-        Preconditions.checkArgument(type != null, "type is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#getClient()
+	 */
+	@Override
+	public Client getClient() {
+		return this.elasticSearchClient;
+	}
 
-        Preconditions.checkArgument(document != null, "document is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#index(java.lang.String,
+	 *      java.lang.Class, java.lang.Object)
+	 */
+	@Override
+	public void index(final Class<?> type, final Object document) {
 
-        Preconditions.checkArgument(document instanceof Advert, "advert document is required");
+		Preconditions.checkArgument(type != null, "type is required");
 
-        Preconditions.checkArgument(((Persistable) document).getId() != null, "document id is required");
+		Preconditions.checkArgument(document != null, "document is required");
 
-        final Advert advert = (Advert) document;
+		Preconditions.checkArgument(document instanceof Advert, "advert document is required");
 
-        final byte[] source = advertToJsonByteArrayConverter.convert(advert);
+		Preconditions.checkArgument(((Persistable) document).getId() != null, "document id is required");
 
-        elasticSearchClient
-                .prepareIndex(Utils.pluralize(type), Utils.minimize(type), ((Persistable) document).getId().toString())//
-                .setRefresh(true) //
-                .setSource(source) //
-                .execute().actionGet();
+		final Advert advert = (Advert) document;
 
-        // System.out.println("finished indexing advert =" + advert);
+		final byte[] source = this.advertToJsonByteArrayConverter.convert(advert);
 
-    }
+		this.elasticSearchClient
+				.prepareIndex(Utils.pluralize(type), Utils.minimize(type), ((Persistable) document).getId().toString())//
+				.setRefresh(true) //
+				.setSource(source) //
+				.execute().actionGet();
 
-    /**
-     * @param orderByList
-     * @return
-     */
-    boolean orderSpecificationDoesntContainDefaultSortField(final Set<OrderBy> orderByList) {
+		// System.out.println("finished indexing advert =" + advert);
 
-        if (CollectionUtils.isEmpty(orderByList))
-            return true;
+	}
 
-        Collection<String> orderFields = Collections2.transform(orderByList, new Function<OrderBy, String>() {
+	/**
+	 * @param orderByList
+	 * @return
+	 */
+	boolean orderSpecificationDoesntContainDefaultSortField(final Set<OrderBy> orderByList) {
 
-            @Override
-            public String apply(final OrderBy input) {
+		if (CollectionUtils.isEmpty(orderByList)) return true;
 
-                return input.getField();
+		Collection<String> orderFields = Collections2.transform(orderByList, new Function<OrderBy, String>() {
 
-            }
-        });
+			@Override
+			public String apply(final OrderBy input) {
 
-        orderFields = Collections2.filter(orderFields, new Predicate<String>() {
-            /**
-             * @see com.google.common.base.Predicate#apply(java.lang.Object)
-             */
-            @Override
-            public boolean apply(final String input) {
-                return StringUtils.isNotEmpty(input);
-            }
+				return input.getField();
 
-        });
+			}
+		});
 
-        return CollectionUtils.isEmpty(orderFields) || !orderFields.contains(OrderBy.DEFAULT_FIELD);
+		orderFields = Collections2.filter(orderFields, new Predicate<String>() {
+			/**
+			 * @see com.google.common.base.Predicate#apply(java.lang.Object)
+			 */
+			@Override
+			public boolean apply(final String input) {
+				return StringUtils.isNotEmpty(input);
+			}
 
-    }
+		});
 
-    /**
-     * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#removeFromIndex(java.lang.String, java.lang.Class,
-     *      java.lang.Long)
-     */
-    @Override
-    public void removeFromIndex(final Class<?> type, final Long id) {
+		return CollectionUtils.isEmpty(orderFields) || !orderFields.contains(OrderBy.DEFAULT_FIELD);
 
-        Preconditions.checkArgument(type != null, "type is required");
+	}
 
-        Preconditions.checkArgument(id != null, "Id is required");
+	/**
+	 * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#removeFromIndex(java.lang.String,
+	 *      java.lang.Class, java.lang.Long)
+	 */
+	@Override
+	public void removeFromIndex(final Class<?> type, final Long id) {
 
-        elasticSearchClient.prepareDelete(Utils.pluralize(type), Utils.minimize(type), id.toString()).setRefresh(true)
-                .execute().actionGet();
+		Preconditions.checkArgument(type != null, "type is required");
 
-    }
+		Preconditions.checkArgument(id != null, "Id is required");
 
-    QueryBuilder resolveQueryBuilder(final List<String> clauses) {
+		this.elasticSearchClient.prepareDelete(Utils.pluralize(type), Utils.minimize(type), id.toString())
+				.setRefresh(true).execute().actionGet();
 
-        QueryBuilder queryBuilder = null;
+	}
 
-        if (CollectionUtils.isEmpty(clauses)) {
-            System.out.println("Using matchAllQuery");
+	QueryBuilder resolveQueryBuilder(final List<String> clauses) {
 
-            return QueryBuilders.matchAllQuery();
-        }
+		QueryBuilder queryBuilder = null;
 
-        if (CollectionUtils.size(clauses) == 1) {
+		if (CollectionUtils.isEmpty(clauses)) return QueryBuilders.matchAllQuery();
 
-            final String clause = clauses.get(0);
+		if (CollectionUtils.size(clauses) == 1) {
 
-            final FieldOperatorValueTriple fieldOperatorValueTriple = FieldOperatorValueTriple.fromClause(clause);
+			final String clause = clauses.get(0);
 
-            if (fieldOperatorValueTriple.isValueOnly()) {
-                System.out.println("Using queryString query on _all fields");
-                return QueryBuilders.queryString(fieldOperatorValueTriple.getValue()).defaultField("_all");
-            }
+			final FieldOperatorValueTriple fieldOperatorValueTriple = FieldOperatorValueTriple.fromClause(clause);
 
-        }
+			if (fieldOperatorValueTriple.isValueOnly()) // System.out.println("Using queryString query on _all fields");
+			return QueryBuilders.queryString(fieldOperatorValueTriple.getValue()).defaultField("_all");
 
-        queryBuilder = boolQuery();
+		}
 
-        for (final String clause : clauses) {
+		queryBuilder = boolQuery();
 
-            final FieldOperatorValueTriple fieldOperatorValueTriple = FieldOperatorValueTriple.fromClause(clause);
+		for ( final String clause : clauses ) {
 
-            switch (fieldOperatorValueTriple.getOperator()) {
-                case EXACT_MATCH_OPERATOR:
-                    ((BoolQueryBuilder) queryBuilder).must(termQuery(fieldOperatorValueTriple.getField(),
-                        fieldOperatorValueTriple.getValue()));
-                    System.out.println("Using bool query then termQuery on " + fieldOperatorValueTriple.getField()
-                        + " field");
-                    break;
-                case FULL_TEXT_OPERATOR:
-                    ((BoolQueryBuilder) queryBuilder).must(queryString(fieldOperatorValueTriple.getValue())
-                            .defaultField(fieldOperatorValueTriple.getField()));
-                    System.out.println("Using bool query then queryString on " + fieldOperatorValueTriple.getField()
-                        + " field");
+			final FieldOperatorValueTriple fieldOperatorValueTriple = FieldOperatorValueTriple.fromClause(clause);
 
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported search operator = "
-                        + fieldOperatorValueTriple.getOperator());
-            }
+			switch (fieldOperatorValueTriple.getOperator()) {
+				case EXACT_MATCH_OPERATOR:
+					((BoolQueryBuilder) queryBuilder).must(termQuery(fieldOperatorValueTriple.getField(),
+							fieldOperatorValueTriple.getValue()));
+					// System.out.println("Using bool query then termQuery on "
+					// + fieldOperatorValueTriple.getField()
+					// + " field");
+					break;
+				case FULL_TEXT_OPERATOR:
+					((BoolQueryBuilder) queryBuilder).must(queryString(fieldOperatorValueTriple.getValue())
+							.defaultField(fieldOperatorValueTriple.getField()));
+					// System.out.println("Using bool query then queryString on "
+					// + fieldOperatorValueTriple.getField()
+					// + " field");
 
-        }
+					break;
+				default:
+					throw new UnsupportedOperationException("Unsupported search operator = "
+							+ fieldOperatorValueTriple.getOperator());
+			}
 
-        return queryBuilder;
+		}
 
-    }
+		return queryBuilder;
 
-    /**
-     * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#search(org.diveintojee.poc.jbehave.domain.SearchQuery)
-     */
+	}
 
-    @Override
-    public SearchResult search(final SearchQuery searchQuery) {
+	/**
+	 * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#search(org.diveintojee.poc.jbehave.domain.SearchQuery)
+	 */
 
-        final SearchRequestBuilder searchRequestBuilder = convertSearchQueryToRequestBuilder(searchQuery);
+	@Override
+	public SearchResult search(final SearchQuery searchQuery) {
 
-        final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
+		final SearchRequestBuilder searchRequestBuilder = convertSearchQueryToRequestBuilder(searchQuery);
 
-        final SearchResult result = searchResponseToSearchResultConverter.convert(searchResponse);
+		final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
 
-        return result;
+		final SearchResult result = this.searchResponseToSearchResultConverter.convert(searchResponse);
 
-    }
+		return result;
+
+	}
 
 }

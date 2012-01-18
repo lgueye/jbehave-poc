@@ -5,6 +5,7 @@ package org.diveintojee.poc.jbehave.stories.steps;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -33,104 +34,98 @@ import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
  * @author louis.gueye@gmail.com
  */
 public class SearchSteps {
-    private final String baseEndPoint = ResourceBundle.getBundle("stories-context").getString("baseEndPoint");
-    private final List<String> resources = new ArrayList<String>();
-    private String responseContentType;
-    private SearchResult results;
+	private final String		baseEndPoint	= ResourceBundle.getBundle("stories-context").getString("baseEndPoint");
+	private final List<String>	resources		= new ArrayList<String>();
+	private String				responseContentType;
+	private SearchResult		results;
 
-    // When I find by exact reference "B0035WVABS"
-    // And I receive <responseContentType>
-    // Then I should get the following adverts:
+	@Then("I should get the following adverts: $adverts")
+	public void expectedResults(@Named("adverts") final ExamplesTable advertsAsTable) {
 
-    // \"$reference\"
+		final List<Map<String, String>> expected = advertsAsTable.getRows();
+		final List<Map<String, String>> actual = new ArrayList<Map<String, String>>();
 
-    @Then("I should get the following adverts: $adverts")
-    public void expectedResults(@Named("adverts") final ExamplesTable advertsAsTable) {
+		for ( Advert advert : this.results.getItems() ) {
+			Map<String, String> row = new HashMap<String, String>();
+			row.put("address.city", advert.getAddress().getCity());
+			row.put("address.countryCode", advert.getAddress().getCountryCode());
+			row.put("address.postalCode", advert.getAddress().getPostalCode());
+			row.put("address.streetAddress", advert.getAddress().getStreetAddress());
+			row.put("description", advert.getDescription());
+			row.put("email", advert.getEmail());
+			row.put("name", advert.getName());
+			row.put("reference", advert.getReference());
+			row.put("phoneNumber", advert.getPhoneNumber());
+			actual.add(row);
+		}
 
-        final List<Advert> expected = new ArrayList<Advert>();
+		Assert.assertEquals(expected, actual);
 
-        for (final Map<String, String> row : advertsAsTable.getRows()) {
-            if (row != null) {
-                final Advert advert = new Advert();
-                advert.getAddress().setCity(row.get("address.city"));
-                advert.getAddress().setCountryCode("fr");
-                advert.getAddress().setPostalCode(row.get("address.postalCode"));
-                advert.getAddress().setStreetAddress(row.get("address.streetAddress"));
-                advert.setDescription(row.get("description"));
-                advert.setEmail(row.get("email"));
-                advert.setName(row.get("name"));
-                advert.setPhoneNumber(row.get("phoneNumber"));
-                expected.add(advert);
-            }
-        }
+	}
 
-        Assert.assertEquals(expected, results.getItems());
+	@When("I find by exact reference \"$reference\"")
+	public void findByExactReference(@Named("reference") final String reference) {
+		final String query = "query=reference:" + reference;
+		final String path = "/search/adverts?" + query;
+		final URI uri = URI.create(this.baseEndPoint + path);
+		final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
+		config.getClasses().add(JacksonJsonProvider.class);
+		final Client jerseyClient = ApacheHttpClient4.create(config);
+		jerseyClient.addFilter(new LoggingFilter());
+		final ClientResponse response = jerseyClient.resource(uri).accept(MediaType.valueOf(this.responseContentType))
+				.acceptLanguage(new String[] { "en" }).get(ClientResponse.class);
+		this.results = response.getEntity(SearchResult.class);
+	}
 
-    }
+	@When("I receive <responseContentType> data")
+	public void setResponseContentType(@Named("responseContentType") final String responseContentType) {
+		this.responseContentType = responseContentType;
+	}
 
-    @When("I find by exact reference \"$reference\"")
-    public void findByExactReference(@Named("reference") final String reference) {
-        final String query = "query=reference:" + reference;
-        final String path = "/search/adverts?" + query;
-        final URI uri = URI.create(baseEndPoint + path);
-        final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
-        config.getClasses().add(JacksonJsonProvider.class);
-        final Client jerseyClient = ApacheHttpClient4.create(config);
-        jerseyClient.addFilter(new LoggingFilter());
-        final ClientResponse response = jerseyClient.resource(uri).accept(MediaType.valueOf(responseContentType))
-                .acceptLanguage(new String[] { "en" }).get(ClientResponse.class);
-        results = response.getEntity(SearchResult.class);
-    }
+	@Given("adverts: $adverts")
+	public void setup(@Named("adverts") final ExamplesTable advertsAsTable) {
 
-    @When("I receive <responseContentType> data")
-    public void setResponseContentType(@Named("responseContentType") final String responseContentType) {
-        this.responseContentType = responseContentType;
-    }
+		for ( final Map<String, String> row : advertsAsTable.getRows() )
+			if (row != null) {
 
-    @Given("adverts: $adverts")
-    public void setup(@Named("adverts") final ExamplesTable advertsAsTable) {
+				final Advert advert = new Advert();
+				advert.getAddress().setCity(row.get("address.city"));
+				advert.getAddress().setCountryCode("fr");
+				advert.getAddress().setPostalCode(row.get("address.postalCode"));
+				advert.getAddress().setStreetAddress(row.get("address.streetAddress"));
+				advert.setDescription(row.get("description"));
+				advert.setEmail(row.get("email"));
+				advert.setName(row.get("name"));
+				advert.setReference(row.get("reference"));
+				advert.setPhoneNumber(row.get("phoneNumber"));
+				final String path = "/advert";
+				final URI uri = URI.create(this.baseEndPoint + path);
+				final String requestContentType = "application/json";
+				final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
+				final Client jerseyClient = ApacheHttpClient4.create(config);
+				jerseyClient.addFilter(new LoggingFilter());
+				final WebResource webResource = jerseyClient.resource(uri);
+				final ClientResponse response = webResource.header("Content-Type", requestContentType).post(
+						ClientResponse.class, advert);
+				if (response.getLocation() != null) {
+					System.out.println(response.getLocation());
+					this.resources.add(response.getLocation().toString());
+				}
+			}
+	}
 
-        for (final Map<String, String> row : advertsAsTable.getRows())
-            if (row != null) {
+	@Then("tear down")
+	public void tearDown() {
 
-                final Advert advert = new Advert();
-                advert.getAddress().setCity(row.get("address.city"));
-                advert.getAddress().setCountryCode("fr");
-                advert.getAddress().setPostalCode(row.get("address.postalCode"));
-                advert.getAddress().setStreetAddress(row.get("address.streetAddress"));
-                advert.setDescription(row.get("description"));
-                advert.setEmail(row.get("email"));
-                advert.setName(row.get("name"));
-                advert.setReference(row.get("reference"));
-                advert.setPhoneNumber(row.get("phoneNumber"));
-                final String path = "/advert";
-                final URI uri = URI.create(baseEndPoint + path);
-                final String requestContentType = "application/json";
-                final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
-                final Client jerseyClient = ApacheHttpClient4.create(config);
-                jerseyClient.addFilter(new LoggingFilter());
-                final WebResource webResource = jerseyClient.resource(uri);
-                final ClientResponse response = webResource.header("Content-Type", requestContentType).post(
-                    ClientResponse.class, advert);
-                if (response.getLocation() != null) {
-                    System.out.println(response.getLocation());
-                    resources.add(response.getLocation().toString());
-                }
-            }
-    }
+		final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
+		final Client jerseyClient = ApacheHttpClient4.create(config);
+		jerseyClient.addFilter(new LoggingFilter());
 
-    @Then("tear down")
-    public void tearDown() {
+		for ( final String location : this.resources ) {
+			final WebResource webResource = jerseyClient.resource(location);
+			webResource.delete();
+		}
 
-        final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
-        final Client jerseyClient = ApacheHttpClient4.create(config);
-        jerseyClient.addFilter(new LoggingFilter());
-
-        for (final String location : resources) {
-            final WebResource webResource = jerseyClient.resource(location);
-            webResource.delete();
-        }
-
-    }
+	}
 
 }
