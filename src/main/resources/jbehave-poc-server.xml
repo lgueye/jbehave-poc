@@ -64,11 +64,6 @@
 				<prop key="hibernate.ejb.event.pre-insert">org.hibernate.cfg.beanvalidation.BeanValidationEventListener</prop>
 				<prop key="hibernate.ejb.event.pre-update">org.hibernate.cfg.beanvalidation.BeanValidationEventListener</prop>
 				<prop key="hibernate.ejb.event.pre-delete">org.hibernate.cfg.beanvalidation.BeanValidationEventListener</prop>
-				<!-- 
-				<prop key="hibernate.ejb.event.post-insert">org.hibernate.ejb.event.EJB3PostInsertEventListener,org.diveintojee.poc.jbehave.persistence.PostInsertEventListener</prop>
-				<prop key="hibernate.ejb.event.post-update">org.hibernate.ejb.event.EJB3PostUpdateEventListener,org.diveintojee.poc.jbehave.persistence.PostUpdateEventListener</prop>
-				<prop key="hibernate.ejb.event.post-delete">org.hibernate.ejb.event.EJB3PostDeleteEventListener,org.diveintojee.poc.jbehave.persistence.PostDeleteEventListener</prop>
-				 -->
 			</props>
 		</property>
 	</bean>

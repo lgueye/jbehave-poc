@@ -12,72 +12,69 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author louis.gueye@gmail.com
  */
 @XmlRootElement
-public class SearchResult {
+public class SearchResult extends AbstractObject {
 
-	private long			totalHits;
+    private long totalHits;
 
-	private List<Advert>	items;
+    private List<Advert> items;
 
-	private SearchQuery		searchQuery;
+    private SearchQuery searchQuery;
 
-	/**
+    /**
 	 * 
 	 */
-	public SearchResult() {
-		super();
-		this.items = new ArrayList<Advert>();
-	}
+    public SearchResult() {
+        super();
+        items = new ArrayList<Advert>();
+    }
 
-	/**
-	 * @return the totalHits
-	 */
-	public long getTotalHits() {
-		return this.totalHits;
-	}
+    /**
+     * @param advert
+     */
+    public void addItem(final Advert advert) {
+        items.add(advert);
+    }
 
-	/**
-	 * @param totalHits
-	 *            the totalHits to set
-	 */
-	public void setTotalHits(long totalHits) {
-		this.totalHits = totalHits;
-	}
+    /**
+     * @return the items
+     */
+    public List<Advert> getItems() {
+        return items;
+    }
 
-	/**
-	 * @return the items
-	 */
-	public List<Advert> getItems() {
-		return this.items;
-	}
+    /**
+     * @return the searchQuery
+     */
+    public SearchQuery getSearchQuery() {
+        return searchQuery;
+    }
 
-	/**
-	 * @param items
-	 *            the items to set
-	 */
-	public void setItems(List<Advert> items) {
-		this.items = items;
-	}
+    /**
+     * @return the totalHits
+     */
+    public long getTotalHits() {
+        return totalHits;
+    }
 
-	/**
-	 * @param advert
-	 */
-	public void addItem(Advert advert) {
-		this.items.add(advert);
-	}
+    /**
+     * @param items the items to set
+     */
+    public void setItems(final List<Advert> items) {
+        this.items = items;
+    }
 
-	/**
-	 * @return the searchQuery
-	 */
-	public SearchQuery getSearchQuery() {
-		return this.searchQuery;
-	}
+    /**
+     * @param searchQuery the searchQuery to set
+     */
+    public void setSearchQuery(final SearchQuery searchQuery) {
+        this.searchQuery = searchQuery;
+    }
 
-	/**
-	 * @param searchQuery
-	 *            the searchQuery to set
-	 */
-	public void setSearchQuery(SearchQuery searchQuery) {
-		this.searchQuery = searchQuery;
-	}
+    /**
+     * @param totalHits the totalHits to set
+     */
+    public void setTotalHits(final long totalHits) {
+        this.totalHits = totalHits;
+    }
 
 }

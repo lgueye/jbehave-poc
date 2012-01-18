@@ -21,6 +21,7 @@ And I find by exact reference "B0035WVABS"
 Then I should get the following adverts: 
 |name|description|email|phoneNumber|reference|address.streetAddress|address.city|address.postalCode|address.countryCode|
 |Sherlock Holmes|Sherlock Holmes, excellent condition, BLU-RAY, 5€, 1€ shipping|arcanes@chaos.com|061565234102|B0035WVABS|59 rue de la convention|Paris 15ème|75015|fr|
+Then tear down
 
 Examples:
 |responseContentType|

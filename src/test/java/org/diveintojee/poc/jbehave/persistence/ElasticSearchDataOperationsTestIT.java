@@ -71,8 +71,47 @@ public class ElasticSearchDataOperationsTestIT extends AbstractNodesTests {
                 .actionGet();
     }
 
+    /**
+     * @param id
+     */
+    private void deleteAdvertFromIndex(final Long id) {
+        underTest.prepareDelete(Utils.pluralize(Advert.class), Utils.minimize(Advert.class), id.toString())
+                .setRefresh(true).execute().actionGet();
+    }
+
+    /**
+     * @param actualResponse
+     * @return
+     */
+    private Advert extractAdvertFromResponse(final SearchResponse actualResponse) {
+
+        assertNotNull(actualResponse);
+
+        assertNotNull(actualResponse.getHits());
+
+        final SearchHits hits = actualResponse.getHits();
+
+        assertEquals(1, hits.getTotalHits());
+
+        final SearchHit hit = hits.getHits()[0];
+
+        assertNotNull(hit);
+
+        assertNotNull(hit.source());
+
+        final Advert advert = jsonByteArrayToAdvertConverter.convert(hit.source());
+
+        return advert;
+
+    }
+
+    private SearchResponse findById(final Long id) {
+        return underTest.prepareSearch(Utils.pluralize(Advert.class)).setTypes(Utils.minimize(Advert.class))
+                .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("_id", id))).execute().actionGet();
+    }
+
     @Test
-    public void crudOnDataShouldSucceed() {
+    public void findByReferenceShouldSucceed() {
         final Long id = 8L;
         int expectedHitsCount;
         SearchResponse actualResponse;
@@ -120,45 +159,6 @@ public class ElasticSearchDataOperationsTestIT extends AbstractNodesTests {
         // Then I should get 0 hit
         assertHitsCount(expectedHitsCount, actualResponse);
 
-    }
-
-    /**
-     * @param id
-     */
-    private void deleteAdvertFromIndex(final Long id) {
-        underTest.prepareDelete(Utils.pluralize(Advert.class), Utils.minimize(Advert.class), id.toString())
-                .setRefresh(true).execute().actionGet();
-    }
-
-    /**
-     * @param actualResponse
-     * @return
-     */
-    private Advert extractAdvertFromResponse(final SearchResponse actualResponse) {
-
-        assertNotNull(actualResponse);
-
-        assertNotNull(actualResponse.getHits());
-
-        final SearchHits hits = actualResponse.getHits();
-
-        assertEquals(1, hits.getTotalHits());
-
-        final SearchHit hit = hits.getHits()[0];
-
-        assertNotNull(hit);
-
-        assertNotNull(hit.source());
-
-        final Advert advert = jsonByteArrayToAdvertConverter.convert(hit.source());
-
-        return advert;
-
-    }
-
-    private SearchResponse findById(final Long id) {
-        return underTest.prepareSearch(Utils.pluralize(Advert.class)).setTypes(Utils.minimize(Advert.class))
-                .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("_id", id))).execute().actionGet();
     }
 
     protected Client getClient() {

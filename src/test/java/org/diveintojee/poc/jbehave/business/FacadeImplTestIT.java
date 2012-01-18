@@ -6,9 +6,23 @@ package org.diveintojee.poc.jbehave.business;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.Assert;
 
+import org.apache.commons.io.IOUtils;
 import org.diveintojee.poc.jbehave.domain.Advert;
+import org.diveintojee.poc.jbehave.domain.OrderBy;
+import org.diveintojee.poc.jbehave.domain.SearchResult;
+import org.diveintojee.poc.jbehave.domain.SortDirection;
 import org.diveintojee.poc.jbehave.domain.Utils;
 import org.diveintojee.poc.jbehave.domain.business.Facade;
 import org.diveintojee.poc.jbehave.persistence.JsonByteArrayToAdvertConverter;
@@ -23,7 +37,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -44,6 +60,9 @@ public class FacadeImplTestIT {
     @Qualifier(JsonByteArrayToAdvertConverter.BEAN_ID)
     private Converter<byte[], Advert> jsonByteArrayToAdvertConverter;
 
+    @Value("classpath:elasticsearch/mappings/advert.json")
+    private Resource mapping;
+
     private void assertHitsCount(final int expectedHitsCount, final SearchResponse actualResponse) {
 
         assertNotNull(actualResponse);
@@ -59,7 +78,7 @@ public class FacadeImplTestIT {
     }
 
     @Before
-    public void before() {
+    public void before() throws IOException {
 
         assertNotNull(searchEngine);
 
@@ -72,6 +91,11 @@ public class FacadeImplTestIT {
 
         // create it
         searchEngine.getClient().admin().indices().prepareCreate(Utils.pluralize(Advert.class)).execute().actionGet();
+
+        final Writer writer = new StringWriter();
+        IOUtils.copy(mapping.getInputStream(), writer, "UTF-8");
+        searchEngine.getClient().admin().indices().preparePutMapping(Utils.pluralize(Advert.class))
+                .setSource(writer.toString()).setType(Utils.minimize(Advert.class)).execute().actionGet();
 
     }
 
@@ -134,6 +158,15 @@ public class FacadeImplTestIT {
 
     }
 
+    /**
+     * @param ids
+     */
+    private void deleteAdverts(final List<Long> ids) {
+        for (final Long id : ids) {
+            underTest.deleteAdvert(id);
+        }
+    }
+
     @Test
     public void deleteEntityShouldSucceed() throws Throwable {
         // Given
@@ -178,10 +211,72 @@ public class FacadeImplTestIT {
 
     }
 
+    @Test
+    public void findByEmailShouldSucceed() {
+        // Variables
+        String queryString;
+        Set<OrderBy> orderByList;
+        final int startPage;
+        final int itemsPerPage;
+
+        // Given
+        final List<Long> ids = insertSearchableAdverts();
+
+        queryString = "email:foo009@bar.com";
+        orderByList = new HashSet<OrderBy>(Arrays.asList(new OrderBy("reference", SortDirection.DESC)));
+        startPage = 1;
+        itemsPerPage = 2;
+
+        // When
+        final SearchResult results = underTest.findAdvertsByCriteria(queryString, orderByList, startPage, itemsPerPage);
+
+        // Then
+        assertNotNull(results);
+        assertEquals(2, results.getTotalHits());
+        assertEquals(results.getTotalHits(), results.getItems().size());
+
+        deleteAdverts(ids);
+    }
+
     private SearchResponse findById(final Long id) {
         return searchEngine.getClient().prepareSearch(Utils.pluralize(Advert.class))
                 .setTypes(Utils.minimize(Advert.class))
                 .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("_id", id))).execute().actionGet();
+    }
+
+    /**
+     * @return
+     */
+    private List<Long> insertSearchableAdverts() {
+
+        final List<Long> ids = new ArrayList<Long>();
+        Advert advert;
+
+        advert = new Advert();
+        advert.getAddress().setCity("Paris 9ème");
+        advert.getAddress().setCountryCode("fr");
+        advert.getAddress().setPostalCode("75009");
+        advert.getAddress().setStreetAddress("3 rue Lafayette");
+        advert.setDescription("Baby phone CHICCO, scope 30m, excellent condition, 10€, pick up on site only");
+        advert.setEmail("foo009@bar.com");
+        advert.setName("Baby phone TBE");
+        advert.setReference("REF-75009-001");
+        advert.setPhoneNumber("060965234102");
+        ids.add(underTest.createAdvert(advert));
+
+        advert = new Advert();
+        advert.getAddress().setCity("Paris 9ème");
+        advert.getAddress().setCountryCode("fr");
+        advert.getAddress().setPostalCode("75009");
+        advert.getAddress().setStreetAddress("10 rue Le peletier");
+        advert.setDescription("JANE twin stroller, good condition, 120€, pick up on site only");
+        advert.setEmail("foo009@bar.com");
+        advert.setName("Twin stroller");
+        advert.setReference("978-2253170570");
+        advert.setPhoneNumber("060968634102");
+        ids.add(underTest.createAdvert(advert));
+
+        return ids;
     }
 
     @Test
