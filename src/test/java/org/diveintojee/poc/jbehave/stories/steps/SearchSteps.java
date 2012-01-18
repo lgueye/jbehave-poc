@@ -13,11 +13,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.diveintojee.poc.jbehave.domain.Advert;
+import org.diveintojee.poc.jbehave.domain.SearchResult;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Named;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 import org.jbehave.core.model.ExamplesTable;
+import org.junit.Assert;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -34,6 +36,7 @@ public class SearchSteps {
 	private final String		baseEndPoint	= ResourceBundle.getBundle("stories-context").getString("baseEndPoint");
 	private final List<String>	resources		= new ArrayList<String>();
 	private String				responseContentType;
+	private SearchResult		results;
 
 	// When I find by exact reference "B0035WVABS"
 	// And I receive <responseContentType>
@@ -44,11 +47,30 @@ public class SearchSteps {
 	@Then("I should get the following adverts: $adverts")
 	public void expectedResults(@Named("adverts") final ExamplesTable advertsAsTable) {
 
+		List<Advert> expected = new ArrayList<Advert>();
+
+		for ( final Map<String, String> row : advertsAsTable.getRows() ) {
+			if (row != null) {
+				final Advert advert = new Advert();
+				advert.getAddress().setCity(row.get("address.city"));
+				advert.getAddress().setCountryCode("fr");
+				advert.getAddress().setPostalCode(row.get("address.postalCode"));
+				advert.getAddress().setStreetAddress(row.get("address.streetAddress"));
+				advert.setDescription(row.get("description"));
+				advert.setEmail(row.get("email"));
+				advert.setName(row.get("name"));
+				advert.setPhoneNumber(row.get("phoneNumber"));
+				expected.add(advert);
+			}
+		}
+
+		Assert.assertEquals(expected, this.results.getItems());
+
 	}
 
 	@When("I find by exact reference \"$reference\"")
 	public void findByExactReference(@Named("reference") final String reference) {
-		final String query = "q=reference:" + reference;
+		final String query = "query=reference:" + reference;
 		final String path = "/search/adverts?" + query;
 		final URI uri = URI.create(this.baseEndPoint + path);
 		final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
@@ -57,7 +79,7 @@ public class SearchSteps {
 		jerseyClient.addFilter(new LoggingFilter());
 		final ClientResponse response = jerseyClient.resource(uri).accept(MediaType.valueOf(this.responseContentType))
 				.acceptLanguage(new String[] { "en" }).get(ClientResponse.class);
-		response.getEntity(List.class);
+		this.results = response.getEntity(SearchResult.class);
 	}
 
 	@When("I receive <responseContentType> data")
@@ -67,7 +89,7 @@ public class SearchSteps {
 
 	@Given("adverts: $adverts")
 	public void setup(@Named("adverts") final ExamplesTable advertsAsTable) {
-		for (final Map<String, String> row : advertsAsTable.getRows())
+		for ( final Map<String, String> row : advertsAsTable.getRows() )
 			if (row != null) {
 				final Advert advert = new Advert();
 				advert.getAddress().setCity(row.get("address.city"));
@@ -86,7 +108,9 @@ public class SearchSteps {
 				final WebResource webResource = jerseyClient.resource(uri);
 				final ClientResponse response = webResource.header("Content-Type", requestContentType).post(
 						ClientResponse.class, advert);
-				if (response.getLocation() != null) this.resources.add(response.getLocation().toString());
+				if (response.getLocation() != null) {
+					this.resources.add(response.getLocation().toString());
+				}
 			}
 	}
 }

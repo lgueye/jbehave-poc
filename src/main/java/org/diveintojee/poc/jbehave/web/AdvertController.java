@@ -4,6 +4,7 @@
 package org.diveintojee.poc.jbehave.web;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,13 +25,16 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.diveintojee.poc.jbehave.domain.Advert;
+import org.diveintojee.poc.jbehave.domain.OrderBy;
 import org.diveintojee.poc.jbehave.domain.SearchResult;
 import org.diveintojee.poc.jbehave.domain.business.Facade;
 import org.diveintojee.poc.jbehave.domain.exceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,12 +46,16 @@ import org.springframework.stereotype.Component;
 public class AdvertController {
 
 	@Autowired
-	private Facade				facade;
+	private Facade						facade;
 
 	@Context
-	UriInfo						uriInfo;
+	UriInfo								uriInfo;
 
-	private static final Logger	LOGGER	= LoggerFactory.getLogger(AdvertController.class);
+	@Autowired
+	@Qualifier(StringToOrderByConverter.BEAN_ID)
+	private Converter<String, OrderBy>	stringToOrderByConverter;
+
+	private static final Logger			LOGGER	= LoggerFactory.getLogger(AdvertController.class);
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
@@ -126,9 +134,33 @@ public class AdvertController {
 			@QueryParam(value = "from") final int from, //
 			@QueryParam(value = "itemsPerPage") final int itemsPerPage) throws Throwable {//
 
-		final SearchResult results = this.facade.findAdvertsByCriteria(query, null, from, itemsPerPage);
+		Set<OrderBy> orderByList = fromParams(sort);
+
+		final SearchResult results = this.facade.findAdvertsByCriteria(query, orderByList, from, itemsPerPage);
 
 		return Response.ok(results).build();
+
+	}
+
+	/**
+	 * @param sort
+	 * @return
+	 */
+	private Set<OrderBy> fromParams(Set<String> sort) {
+
+		if (CollectionUtils.isEmpty(sort)) return null;
+
+		Set<OrderBy> orderByList = new HashSet<OrderBy>();
+
+		for ( String sortClause : sort ) {
+
+			OrderBy orderBy = this.stringToOrderByConverter.convert(sortClause);
+
+			orderByList.add(orderBy);
+
+		}
+
+		return orderByList;
 
 	}
 

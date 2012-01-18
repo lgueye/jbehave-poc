@@ -16,6 +16,10 @@ public class OrderBy extends AbstractObject {
 
 	private String				field;
 
+	public OrderBy() {
+		super();
+	}
+
 	/**
 	 * @param sortDirection
 	 * @param field

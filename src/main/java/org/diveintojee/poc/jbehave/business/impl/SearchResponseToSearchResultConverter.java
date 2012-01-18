@@ -24,7 +24,7 @@ public class SearchResponseToSearchResultConverter implements Converter<SearchRe
 
     @Autowired
     @Qualifier(JsonByteArrayToAdvertConverter.BEAN_ID)
-    private Converter<byte[], Advert> jsonByteArrayToadvertConverter;
+    private Converter<byte[], Advert> jsonByteArrayToAdvertConverter;
 
     /**
      * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
@@ -40,7 +40,7 @@ public class SearchResponseToSearchResultConverter implements Converter<SearchRe
 
         for (final SearchHit searchHit : hits.getHits()) {
 
-            final Advert advert = jsonByteArrayToadvertConverter.convert(searchHit.source());
+            final Advert advert = jsonByteArrayToAdvertConverter.convert(searchHit.source());
 
             result.addItem(advert);
 

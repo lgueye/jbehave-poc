@@ -992,7 +992,7 @@
 				<jbehave.threads>1</jbehave.threads>
 				<jbehave.storyTimeoutInSecs>10</jbehave.storyTimeoutInSecs>
 				<jbehave.ignoreFailureInStories>false</jbehave.ignoreFailureInStories>
-				<jbehave.meta.filters>+progress done</jbehave.meta.filters>
+				<jbehave.meta.filters>+progress wip</jbehave.meta.filters>
 
 			</properties>
 			<build>
