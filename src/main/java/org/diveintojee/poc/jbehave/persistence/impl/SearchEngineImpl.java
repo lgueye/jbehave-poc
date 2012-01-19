@@ -316,7 +316,6 @@ public class SearchEngineImpl implements SearchEngine {
 	/**
 	 * @see org.diveintojee.poc.jbehave.persistence.SearchEngine#search(org.diveintojee.poc.jbehave.domain.SearchQuery)
 	 */
-
 	@Override
 	public SearchResult search(final SearchQuery searchQuery) {
 
