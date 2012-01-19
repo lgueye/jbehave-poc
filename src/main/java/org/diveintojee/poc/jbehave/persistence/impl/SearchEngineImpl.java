@@ -266,7 +266,8 @@ public class SearchEngineImpl implements SearchEngine {
 
 		QueryBuilder queryBuilder = null;
 
-		if (CollectionUtils.isEmpty(clauses)) return QueryBuilders.matchAllQuery();
+		if (CollectionUtils.isEmpty(clauses)) // System.out.println("Using matchAllQuery");
+		return QueryBuilders.matchAllQuery();
 
 		if (CollectionUtils.size(clauses) == 1) {
 

@@ -12,6 +12,8 @@ import java.util.ResourceBundle;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.net.URLCodec;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.diveintojee.poc.jbehave.domain.Advert;
 import org.diveintojee.poc.jbehave.domain.SearchResult;
@@ -38,6 +40,7 @@ public class SearchSteps {
 	private final List<String>	resources		= new ArrayList<String>();
 	private String				responseContentType;
 	private SearchResult		results;
+	URLCodec					encoder			= new URLCodec();
 
 	@Then("I should get the following adverts: $adverts")
 	public void expectedResults(@Named("adverts") final ExamplesTable advertsAsTable) {
@@ -63,10 +66,25 @@ public class SearchSteps {
 
 	}
 
+	@When("I find by full text description \"$description\"")
+	public void findByFullTextDescriptionReference(@Named("description") final String description)
+			throws EncoderException {
+		final String query = "description~" + description;
+		final String path = "/search/adverts?query=" + this.encoder.encode(query);
+		final URI uri = URI.create(this.baseEndPoint + path);
+		final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
+		config.getClasses().add(JacksonJsonProvider.class);
+		final Client jerseyClient = ApacheHttpClient4.create(config);
+		jerseyClient.addFilter(new LoggingFilter());
+		final ClientResponse response = jerseyClient.resource(uri).accept(MediaType.valueOf(this.responseContentType))
+				.acceptLanguage(new String[] { "en" }).get(ClientResponse.class);
+		this.results = response.getEntity(SearchResult.class);
+	}
+
 	@When("I find by exact reference \"$reference\"")
-	public void findByExactReference(@Named("reference") final String reference) {
-		final String query = "query=reference:" + reference;
-		final String path = "/search/adverts?" + query;
+	public void findByExactReference(@Named("reference") final String reference) throws EncoderException {
+		final String query = "reference:" + reference;
+		final String path = "/search/adverts?query=" + this.encoder.encode(query);
 		final URI uri = URI.create(this.baseEndPoint + path);
 		final DefaultClientConfig config = new DefaultApacheHttpClient4Config();
 		config.getClasses().add(JacksonJsonProvider.class);
@@ -108,7 +126,6 @@ public class SearchSteps {
 				final ClientResponse response = webResource.header("Content-Type", requestContentType).post(
 						ClientResponse.class, advert);
 				if (response.getLocation() != null) {
-					System.out.println(response.getLocation());
 					this.resources.add(response.getLocation().toString());
 				}
 			}
@@ -126,6 +143,7 @@ public class SearchSteps {
 			webResource.delete();
 		}
 
+		this.resources.clear();
 	}
 
 }

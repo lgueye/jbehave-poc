@@ -43,161 +43,160 @@ import org.springframework.stereotype.Component;
 @Path("/")
 public class AdvertController {
 
-    @Autowired
-    private Facade facade;
+	@Autowired
+	private Facade						facade;
 
-    @Context
-    UriInfo uriInfo;
+	@Context
+	UriInfo								uriInfo;
 
-    @Autowired
-    @Qualifier(StringToOrderByConverter.BEAN_ID)
-    private Converter<String, OrderBy> stringToOrderByConverter;
+	@Autowired
+	@Qualifier(StringToOrderByConverter.BEAN_ID)
+	private Converter<String, OrderBy>	stringToOrderByConverter;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdvertController.class);
+	private static final Logger			LOGGER	= LoggerFactory.getLogger(AdvertController.class);
 
-    @POST
-    @Path("/advert")
-    @Consumes({ MediaType.APPLICATION_JSON })
-    public Response create(final Advert advert) throws Throwable {
+	@POST
+	@Path("/advert")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	public Response create(final Advert advert) throws Throwable {
 
-        final Long id = facade.createAdvert(advert);
+		final Long id = this.facade.createAdvert(advert);
 
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(id)).build();
+		final URI uri = this.uriInfo.getAbsolutePathBuilder().path(String.valueOf(id)).build();
 
-        return Response.created(uri).build();
+		return Response.created(uri).build();
 
-    }
+	}
 
-    @DELETE
-    @Path("/advert/{id}")
-    public Response delete(@PathParam(value = "id") final Long id) throws Throwable {
+	@DELETE
+	@Path("/advert/{id}")
+	public Response delete(@PathParam(value = "id") final Long id) throws Throwable {
 
-        facade.deleteAdvert(id);
+		this.facade.deleteAdvert(id);
 
-        return Response.noContent().build();
+		return Response.noContent().build();
 
-    }
+	}
 
-    @POST
-    @Path(value = "/advert/find")
-    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response find(final @FormParam("description") String description, final @FormParam("name") String name,
-            final @FormParam("address.streetAddress") String streetAddress,
-            final @FormParam("address.city") String city, final @FormParam("address.postalCode") String postalCode,
-            final @FormParam("address.countryCode") String countryCode) throws Throwable {
+	@POST
+	@Path(value = "/advert/find")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response find(final @FormParam("description") String description, final @FormParam("name") String name,
+			final @FormParam("address.streetAddress") String streetAddress,
+			final @FormParam("address.city") String city, final @FormParam("address.postalCode") String postalCode,
+			final @FormParam("address.countryCode") String countryCode) throws Throwable {
 
-        final Advert criteria = new Advert();
-        criteria.setName(name);
-        criteria.setDescription(description);
-        criteria.getAddress().setStreetAddress(streetAddress);
-        criteria.getAddress().setCity(city);
-        criteria.getAddress().setPostalCode(postalCode);
-        criteria.getAddress().setCountryCode(countryCode);
+		final Advert criteria = new Advert();
+		criteria.setName(name);
+		criteria.setDescription(description);
+		criteria.getAddress().setStreetAddress(streetAddress);
+		criteria.getAddress().setCity(city);
+		criteria.getAddress().setPostalCode(postalCode);
+		criteria.getAddress().setCountryCode(countryCode);
 
-        final List<Advert> results = facade.findAdvertsByCriteria(criteria);
+		final List<Advert> results = this.facade.findAdvertsByCriteria(criteria);
 
-        final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {};
+		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
+		};
 
-        if (CollectionUtils.isEmpty(results)) {
-            AdvertController.LOGGER.info("No results found");
-        }
+		if (CollectionUtils.isEmpty(results)) {
+			AdvertController.LOGGER.info("No results found");
+		}
 
-        return Response.ok(entity).build();
+		return Response.ok(entity).build();
 
-    }
+	}
 
-    @GET
-    @Path("/search/adverts")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response findByCriteria(//
-            @QueryParam(value = "query") final String query, //
-            @QueryParam(value = "sort") final Set<String> sort,//
-            @QueryParam(value = "from") final int from, //
-            @QueryParam(value = "itemsPerPage") final int itemsPerPage) throws Throwable {//
+	@GET
+	@Path("/search/adverts")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response findByCriteria(//
+			@QueryParam(value = "query") final String query, //
+			@QueryParam(value = "sort") final Set<String> sort,//
+			@QueryParam(value = "from") final int from, //
+			@QueryParam(value = "itemsPerPage") final int itemsPerPage) throws Throwable {//
 
-        final Set<OrderBy> orderByList = fromParams(sort);
+		final Set<OrderBy> orderByList = fromParams(sort);
 
-        final SearchResult results = facade.findAdvertsByCriteria(query, orderByList, from, itemsPerPage);
+		final SearchResult results = this.facade.findAdvertsByCriteria(query, orderByList, from, itemsPerPage);
 
-        return Response.ok(results).build();
+		return Response.ok(results).build();
 
-    }
+	}
 
-    @GET
-    @Path("/advert/find/reference/{reference}")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response findByReference(@PathParam(value = "reference") final String reference) throws Throwable {
+	@GET
+	@Path("/advert/find/reference/{reference}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response findByReference(@PathParam(value = "reference") final String reference) throws Throwable {
 
-        final Advert criteria = new Advert();
-        criteria.setReference(reference);
+		final Advert criteria = new Advert();
+		criteria.setReference(reference);
 
-        final List<Advert> results = facade.findAdvertsByCriteria(criteria);
+		final List<Advert> results = this.facade.findAdvertsByCriteria(criteria);
 
-        if (CollectionUtils.isEmpty(results))
-            throw new NotFoundException(new Object[] { reference });
+		if (CollectionUtils.isEmpty(results)) throw new NotFoundException(new Object[] { reference });
 
-        return Response.ok(results.get(0)).build();
+		return Response.ok(results.get(0)).build();
 
-    }
+	}
 
-    /**
-     * @param sort
-     * @return
-     */
-    private Set<OrderBy> fromParams(final Set<String> sort) {
+	/**
+	 * @param sort
+	 * @return
+	 */
+	private Set<OrderBy> fromParams(final Set<String> sort) {
 
-        if (CollectionUtils.isEmpty(sort))
-            return null;
+		if (CollectionUtils.isEmpty(sort)) return null;
 
-        final Set<OrderBy> orderByList = new HashSet<OrderBy>();
+		final Set<OrderBy> orderByList = new HashSet<OrderBy>();
 
-        for (final String sortClause : sort) {
+		for ( final String sortClause : sort ) {
 
-            final OrderBy orderBy = stringToOrderByConverter.convert(sortClause);
+			final OrderBy orderBy = this.stringToOrderByConverter.convert(sortClause);
 
-            orderByList.add(orderBy);
+			orderByList.add(orderBy);
 
-        }
+		}
 
-        return orderByList;
+		return orderByList;
 
-    }
+	}
 
-    @GET
-    @Path("/advert/{id}")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response get(@PathParam(value = "id") final Long id) throws Throwable {
+	@GET
+	@Path("/advert/{id}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response get(@PathParam(value = "id") final Long id) throws Throwable {
 
-        final Advert advert = facade.readAdvert(id);
+		final Advert advert = this.facade.readAdvert(id);
 
-        if (advert == null)
-            return Response.status(Response.Status.NOT_FOUND).build();
+		if (advert == null) return Response.status(Response.Status.NOT_FOUND).build();
 
-        return Response.ok(advert).build();
+		return Response.ok(advert).build();
 
-    }
+	}
 
-    @GET
-    @Path("/advert/protected")
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public Response returnProtectedResource() throws Throwable {
+	@GET
+	@Path("/advert/protected")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response returnProtectedResource() throws Throwable {
 
-        final Advert criteria = new Advert();
+		final Advert criteria = new Advert();
 
-        // very important phone number !!!!!
-        criteria.setPhoneNumber("0033606060606");
+		// very important phone number !!!!!
+		criteria.setPhoneNumber("0033606060606");
 
-        final List<Advert> results = facade.findProtectedAdvertsByCriteria(criteria);
+		final List<Advert> results = this.facade.findProtectedAdvertsByCriteria(criteria);
 
-        final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {};
+		final GenericEntity<List<Advert>> entity = new GenericEntity<List<Advert>>(results) {
+		};
 
-        if (CollectionUtils.isEmpty(results)) {
-            AdvertController.LOGGER.info("No results found");
-        }
+		if (CollectionUtils.isEmpty(results)) {
+			AdvertController.LOGGER.info("No results found");
+		}
 
-        return Response.ok(entity).build();
+		return Response.ok(entity).build();
 
-    }
+	}
 
 }
