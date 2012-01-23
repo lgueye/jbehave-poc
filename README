@@ -1,17 +1,6 @@
-Little project aimed to help explo team exploring jbehave features
+Little application I work on to explore technologies I'm interested in.
 
-Supported features :
- - maven plugin
- - spring integration
- - stories implementation written in java
- - tabular data injected @before test
- - clean up @after test
- - expectations expressed in tabular form
- - parameterized test
- - meta filters support
- - html reports support
-
-Desired features
- - stories editor w/ completion
-
-
+So far those feature are implemented and backup by Jbehave tests : 
+ - Jersey REST framework (GET, PUT, POST, DELETE, Content negociation, error handling, Security)
+ - JBehave BDD tool (maven integration)
+ - Elasticsearch search engine (index, mapping, full text search, exact match search)
