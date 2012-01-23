@@ -1048,6 +1048,88 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		<profile>
+			<id>search</id>
+			<properties>
+				<!-- log properties -->
+				<log.file.path>${project.build.directory}/jbehave-poc</log.file.path>
+				<org.diveintojee.log.level>debug</org.diveintojee.log.level>
+
+				<!-- persistence properties -->
+				<javax.persistence.jdbc.driver>org.h2.Driver</javax.persistence.jdbc.driver>
+				<javax.persistence.jdbc.url>jdbc:h2:mem:jbehave-poc-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;IGNORECASE=true</javax.persistence.jdbc.url>
+				<javax.persistence.jdbc.user>sa</javax.persistence.jdbc.user>
+				<javax.persistence.jdbc.password />
+				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+				<hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
+				<hibernate.show_sql>true</hibernate.show_sql>
+
+				<!-- container properties -->
+				<container.host>localhost</container.host>
+				<container.port>9080</container.port>
+
+				<jbehave.embeddables>**/stories/*.java</jbehave.embeddables>
+				<jbehave.skip>false</jbehave.skip>
+				<jbehave.threads>1</jbehave.threads>
+				<jbehave.storyTimeoutInSecs>10</jbehave.storyTimeoutInSecs>
+				<jbehave.ignoreFailureInStories>false</jbehave.ignoreFailureInStories>
+				<jbehave.meta.filters>+feature search</jbehave.meta.filters>
+
+			</properties>
+			<build>
+				<resources>
+					<!-- Copy .properties files to output and filter them -->
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+						<includes>
+							<include>**/*.properties</include>
+							<include>**/log4j.xml</include>
+						</includes>
+					</resource>
+					<!-- Copy .xml files to output and do not filter them -->
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>false</filtering>
+					</resource>
+				</resources>
+				<testResources>
+					<!-- Copy .properties files to output and filter them -->
+					<testResource>
+						<directory>src/test/resources</directory>
+						<filtering>true</filtering>
+						<includes>
+							<include>**/*.properties</include>
+							<include>**/log4j.xml</include>
+						</includes>
+					</testResource>
+					<!-- Copy .xml files to output and do not filter them -->
+					<testResource>
+						<directory>src/test/resources</directory>
+						<filtering>false</filtering>
+					</testResource>
+				</testResources>
+
+				<plugins>
+					<!-- Runs tests that end with TestIT (database) tests -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+					</plugin>
+					<!-- Starts an embedded container and deploy the war to that container -->
+					<plugin>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>maven-jetty-plugin</artifactId>
+					</plugin>
+					<!-- Runs the acceptance tests against the running container -->
+					<plugin>
+						<groupId>org.jbehave</groupId>
+						<artifactId>jbehave-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 </project>	

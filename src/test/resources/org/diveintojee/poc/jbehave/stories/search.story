@@ -2,6 +2,7 @@ Search story
 
 Meta:
 @progress wip
+@feature search
 
 Narrative:
 In order to provide search capabilities to my service
