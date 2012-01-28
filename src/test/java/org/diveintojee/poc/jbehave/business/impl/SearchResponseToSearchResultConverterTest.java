@@ -37,7 +37,7 @@ public class SearchResponseToSearchResultConverterTest {
      * Test method for
      * {@link org.diveintojee.poc.jbehave.business.impl.SearchResponseToSearchResultConverter#convert(org.elasticsearch.action.search.SearchResponse)}
      * .
-     * 
+     *
      * @throws UnsupportedEncodingException
      */
     @Test

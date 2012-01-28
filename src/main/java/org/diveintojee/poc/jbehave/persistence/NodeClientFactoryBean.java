@@ -30,7 +30,7 @@ public abstract class NodeClientFactoryBean extends AbstractFactoryBean<Client> 
      * Template method that subclasses must override to construct the object returned by this factory.
      * <p>
      * Invoked on initialization of this FactoryBean in case of a singleton; else, on each {@link #getObject()} call.
-     * 
+     *
      * @return the object returned by this factory
      * @throws Exception if an exception occured during object creation
      * @see #getObject()
@@ -57,7 +57,7 @@ public abstract class NodeClientFactoryBean extends AbstractFactoryBean<Client> 
 
     /**
      * Destroy the singleton instance, if any.
-     * 
+     *
      * @see #destroyInstance(Object)
      */
     @Override
@@ -68,7 +68,7 @@ public abstract class NodeClientFactoryBean extends AbstractFactoryBean<Client> 
     /**
      * This abstract method declaration mirrors the method in the FactoryBean interface, for a consistent offering of
      * abstract template methods.
-     * 
+     *
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
     @Override

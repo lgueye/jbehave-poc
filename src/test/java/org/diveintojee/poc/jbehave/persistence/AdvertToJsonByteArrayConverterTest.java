@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.persistence;
 
@@ -58,7 +58,7 @@ public class AdvertToJsonByteArrayConverterTest {
 	 * Test method for
 	 * {@link org.diveintojee.poc.jbehave.persistence.AdvertToJsonByteArrayConverter#convert(org.diveintojee.poc.jbehave.domain.Advert)}
 	 * .
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException

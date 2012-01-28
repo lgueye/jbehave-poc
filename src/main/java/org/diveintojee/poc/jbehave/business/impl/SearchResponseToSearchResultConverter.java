@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.business.impl;
 

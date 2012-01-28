@@ -31,7 +31,7 @@ import org.springframework.util.ResourceUtils;
  * Advert database integration testing<br/>
  * CRUD operations are tested<br>
  * Finders are tested<br/>
- * 
+ *
  * @author louis.gueye@gmail.com
  */
 public class AdvertPersistenceTestIT extends BasePersistenceTestIT {

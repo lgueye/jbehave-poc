@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.test;
 
@@ -23,7 +23,7 @@ public class TestUtilsTest {
 
     /**
      * Test method for {@link org.diveintojee.poc.jbehave.test.TestUtils#fromJson(java.lang.String, java.lang.Class)} .
-     * 
+     *
      * @throws IOException
      * @throws JsonMappingException
      * @throws JsonParseException
@@ -41,7 +41,7 @@ public class TestUtilsTest {
 
     /**
      * Test method for {@link org.diveintojee.poc.jbehave.test.TestUtils#fromXml(java.lang.String, java.lang.Class)} .
-     * 
+     *
      * @throws JAXBException
      * @throws UnsupportedEncodingException
      */
@@ -69,7 +69,7 @@ public class TestUtilsTest {
 
     /**
      * Test method for {@link org.diveintojee.poc.jbehave.test.TestUtils#toJson(java.lang.Object)}.
-     * 
+     *
      * @throws IOException
      * @throws JsonMappingException
      * @throws JsonGenerationException
@@ -89,7 +89,7 @@ public class TestUtilsTest {
 
     /**
      * Test method for {@link org.diveintojee.poc.jbehave.test.TestUtils#toXml(java.lang.Object)}.
-     * 
+     *
      * @throws JAXBException
      * @throws UnsupportedEncodingException
      */

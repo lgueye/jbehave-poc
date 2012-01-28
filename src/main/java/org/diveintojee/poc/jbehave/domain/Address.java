@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.domain;
 
@@ -31,7 +31,7 @@ public class Address extends AbstractObject implements Serializable {
 	public static final int		CONSTRAINT_COUNTRY_CODE_MAX_SIZE	= 2;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long	serialVersionUID					= -5732718607385874727L;
 

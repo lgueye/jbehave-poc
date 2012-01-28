@@ -1,6 +1,6 @@
 Little application I work on to explore technologies I'm interested in.
 
-So far those feature are implemented and backup by Jbehave tests : 
+So far those feature are implemented and backup by Jbehave tests :
  - Jersey REST framework (GET, PUT, POST, DELETE, Content negociation, error handling, Security)
  - JBehave BDD tool (maven integration)
  - Elasticsearch search engine (index, mapping, full text search, exact match search)
