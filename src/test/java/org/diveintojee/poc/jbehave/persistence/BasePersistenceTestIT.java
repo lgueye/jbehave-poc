@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Base class for database integration testing<br/>
  * Can not be instantiated<br/>
  * Does all the wiring plumbing<br/>
- * 
+ *
  * @author louis.gueye@gmail.com
  */
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -29,7 +29,7 @@ public class LocalNodeClientFactoryBean extends NodeClientFactoryBean {
 	 * <p>
 	 * Invoked on initialization of this FactoryBean in case of a singleton;
 	 * else, on each {@link #getObject()} call.
-	 * 
+	 *
 	 * @return the object returned by this factory
 	 * @throws Exception
 	 *             if an exception occured during object creation

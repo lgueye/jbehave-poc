@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.domain;
 
@@ -21,7 +21,7 @@ public class SearchResult extends AbstractObject {
     private SearchQuery searchQuery;
 
     /**
-	 * 
+	 *
 	 */
     public SearchResult() {
         super();

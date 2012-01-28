@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.persistence.events;
 
@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationEvent;
 public class AdvertPersistenceEvent extends ApplicationEvent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long	serialVersionUID	= 3716026229555243002L;
 

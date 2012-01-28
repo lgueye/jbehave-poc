@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.domain.exceptions;
 
@@ -9,7 +9,7 @@ package org.diveintojee.poc.jbehave.domain.exceptions;
 public class NotFoundException extends BusinessException {
 
     /**
-	 * 
+	 *
 	 */
     private static final long serialVersionUID = 7686464549278707389L;
 

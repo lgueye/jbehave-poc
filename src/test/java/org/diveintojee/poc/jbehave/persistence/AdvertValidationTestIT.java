@@ -16,7 +16,7 @@ import org.junit.Test;
 /**
  * Advert validation testing<br/>
  * CRUD operations are tested<br>
- * 
+ *
  * @author louis.gueye@gmail.com
  */
 public class AdvertValidationTestIT extends BasePersistenceTestIT {

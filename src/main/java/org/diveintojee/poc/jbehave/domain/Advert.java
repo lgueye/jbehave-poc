@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.diveintojee.poc.jbehave.domain;
 
@@ -40,7 +40,7 @@ public class Advert extends AbstractEntity {
     public static final int CONSTRAINT_REFERENCE_MAX_SIZE = 100;
 
     /**
-	 * 
+	 *
 	 */
     private static final long serialVersionUID = -5952533696555432772L;
 
@@ -81,7 +81,7 @@ public class Advert extends AbstractEntity {
     private Address address;
 
     /**
-     * 
+     *
      */
     public Advert() {
         super();
@@ -89,7 +89,7 @@ public class Advert extends AbstractEntity {
     }
 
     /**
-	 * 
+	 *
 	 */
     public Advert(final Long id) {
         super();
