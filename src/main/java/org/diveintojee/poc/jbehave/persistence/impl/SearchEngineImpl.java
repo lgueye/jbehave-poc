@@ -17,7 +17,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.diveintojee.poc.jbehave.business.impl.SearchResponseToSearchResultConverter;
 import org.diveintojee.poc.jbehave.domain.Advert;
-import org.diveintojee.poc.jbehave.domain.FieldOperatorValueTriple;
+import org.diveintojee.poc.jbehave.domain.Clause;
 import org.diveintojee.poc.jbehave.domain.OrderBy;
 import org.diveintojee.poc.jbehave.domain.Persistable;
 import org.diveintojee.poc.jbehave.domain.SearchQuery;
@@ -273,7 +273,7 @@ public class SearchEngineImpl implements SearchEngine {
 
 			final String clause = clauses.get(0);
 
-			final FieldOperatorValueTriple fieldOperatorValueTriple = FieldOperatorValueTriple.fromClause(clause);
+			final Clause fieldOperatorValueTriple = Clause.fromClause(clause);
 
 			if (fieldOperatorValueTriple.isValueOnly()) // System.out.println("Using queryString query on _all fields");
 			return QueryBuilders.queryString(fieldOperatorValueTriple.getValue()).defaultField("_all");
@@ -284,7 +284,7 @@ public class SearchEngineImpl implements SearchEngine {
 
 		for ( final String clause : clauses ) {
 
-			final FieldOperatorValueTriple fieldOperatorValueTriple = FieldOperatorValueTriple.fromClause(clause);
+			final Clause fieldOperatorValueTriple = Clause.fromClause(clause);
 
 			switch (fieldOperatorValueTriple.getOperator()) {
 				case EXACT_MATCH_OPERATOR:

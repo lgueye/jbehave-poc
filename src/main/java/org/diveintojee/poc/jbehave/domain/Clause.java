@@ -9,7 +9,7 @@ import org.diveintojee.poc.jbehave.persistence.SearchOperator;
 /**
  * @author louis.gueye@gmail.com
  */
-public class FieldOperatorValueTriple extends AbstractObject {
+public class Clause extends AbstractObject {
 
 	private SearchOperator	operator;
 	private String			value;
@@ -65,7 +65,7 @@ public class FieldOperatorValueTriple extends AbstractObject {
 	 * @param value
 	 * @param field
 	 */
-	public FieldOperatorValueTriple(String field, SearchOperator operator, String value) {
+	public Clause(String field, SearchOperator operator, String value) {
 		super();
 		this.operator = operator;
 		this.value = value;
@@ -76,29 +76,29 @@ public class FieldOperatorValueTriple extends AbstractObject {
 	 * @param clause
 	 * @return
 	 */
-	public static FieldOperatorValueTriple fromClause(String clause) {
+	public static Clause fromClause(String clause) {
 
-		if (StringUtils.isEmpty(clause)) return new FieldOperatorValueTriple(null, null, null);
+		if (StringUtils.isEmpty(clause)) return new Clause(null, null, null);
 
 		int exactTermOperatorIndex = clause.indexOf(SearchOperator.EXACT_MATCH_OPERATOR.toString());
 
 		int fullTextOperatorIndex = clause.indexOf(SearchOperator.FULL_TEXT_OPERATOR.toString());
 
-		if (exactTermOperatorIndex < 0 && fullTextOperatorIndex < 0) return new FieldOperatorValueTriple(null, null,
+		if (exactTermOperatorIndex < 0 && fullTextOperatorIndex < 0) return new Clause(null, null,
 				clause);
 
 		if (exactTermOperatorIndex < 0) {
 			String field = clause.substring(0, fullTextOperatorIndex);
 			String value = clause.substring(fullTextOperatorIndex
 					+ SearchOperator.FULL_TEXT_OPERATOR.toString().length(), clause.length());
-			return new FieldOperatorValueTriple(field, SearchOperator.FULL_TEXT_OPERATOR, value);
+			return new Clause(field, SearchOperator.FULL_TEXT_OPERATOR, value);
 		}
 
 		if (fullTextOperatorIndex < 0) {
 			String field = clause.substring(0, exactTermOperatorIndex);
 			String value = clause.substring(exactTermOperatorIndex
 					+ SearchOperator.EXACT_MATCH_OPERATOR.toString().length(), clause.length());
-			return new FieldOperatorValueTriple(field, SearchOperator.EXACT_MATCH_OPERATOR, value);
+			return new Clause(field, SearchOperator.EXACT_MATCH_OPERATOR, value);
 		}
 
 		throw new IllegalStateException();

@@ -11,7 +11,7 @@ import org.junit.Test;
 /**
  * @author louis.gueye@gmail.com
  */
-public class FieldOperatorValueTripleTest {
+public class ClauseTest {
 
 	/**
 	 * @throws java.lang.Exception
@@ -22,29 +22,29 @@ public class FieldOperatorValueTripleTest {
 
 	@Test
 	public void isValueOnlyShouldReturnTrue() {
-		Assert.assertTrue(new FieldOperatorValueTriple(null, null, "sdsdsdsd").isValueOnly());
-		Assert.assertTrue(new FieldOperatorValueTriple("", null, "sdsdsdsd").isValueOnly());
+		Assert.assertTrue(new Clause(null, null, "sdsdsdsd").isValueOnly());
+		Assert.assertTrue(new Clause("", null, "sdsdsdsd").isValueOnly());
 	}
 
 	@Test
 	public void isFieldOnlyShouldReturnFalse() {
-		Assert.assertFalse(new FieldOperatorValueTriple(null, null, null).isValueOnly());
-		Assert.assertFalse(new FieldOperatorValueTriple(null, null, "").isValueOnly());
-		Assert.assertFalse(new FieldOperatorValueTriple(null, SearchOperator.EXACT_MATCH_OPERATOR, "xcvxcv")
+		Assert.assertFalse(new Clause(null, null, null).isValueOnly());
+		Assert.assertFalse(new Clause(null, null, "").isValueOnly());
+		Assert.assertFalse(new Clause(null, SearchOperator.EXACT_MATCH_OPERATOR, "xcvxcv")
 				.isValueOnly());
-		Assert.assertFalse(new FieldOperatorValueTriple("xcvxcv", null, "xcvxcvxcv").isValueOnly());
+		Assert.assertFalse(new Clause("xcvxcv", null, "xcvxcvxcv").isValueOnly());
 	}
 
 	@Test
 	public void fromClauseShouldReturn3Nullvalues() {
-		FieldOperatorValueTriple result;
+		Clause result;
 		String clause;
 
 		// Given
 		clause = null;
 
 		// When
-		result = FieldOperatorValueTriple.fromClause(clause);
+		result = Clause.fromClause(clause);
 
 		// Then
 		Assert.assertNull(result.getField());
@@ -55,7 +55,7 @@ public class FieldOperatorValueTripleTest {
 		clause = "";
 
 		// When
-		result = FieldOperatorValueTriple.fromClause(clause);
+		result = Clause.fromClause(clause);
 
 		// Then
 		Assert.assertNull(result.getField());
@@ -66,14 +66,14 @@ public class FieldOperatorValueTripleTest {
 	@Test
 	public void fromClauseShouldExtractExactMatchTriple() {
 
-		FieldOperatorValueTriple result;
+		Clause result;
 		String clause;
 
 		// Given
 		clause = "field:value";
 
 		// When
-		result = FieldOperatorValueTriple.fromClause(clause);
+		result = Clause.fromClause(clause);
 
 		// Then
 		Assert.assertEquals("field", result.getField());
@@ -85,14 +85,14 @@ public class FieldOperatorValueTripleTest {
 	@Test
 	public void fromClauseShouldExtractFullTextTriple() {
 
-		FieldOperatorValueTriple result;
+		Clause result;
 		String clause;
 
 		// Given
 		clause = "field~value";
 
 		// When
-		result = FieldOperatorValueTriple.fromClause(clause);
+		result = Clause.fromClause(clause);
 
 		// Then
 		Assert.assertEquals("field", result.getField());
