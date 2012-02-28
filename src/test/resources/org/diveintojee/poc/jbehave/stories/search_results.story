@@ -1,7 +1,7 @@
 Search story
 
 Meta:
-@progress wip
+@progress
 @feature search
 
 Narrative:

@@ -3,12 +3,12 @@
  */
 package org.diveintojee.poc.jbehave.domain;
 
-import org.diveintojee.poc.jbehave.domain.representation.Link;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.diveintojee.poc.jbehave.domain.representation.Link;
 
 /**
  * @author louis.gueye@gmail.com
@@ -16,99 +16,77 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class SearchResult extends AbstractObject {
 
-  private long totalHits;
+    private long totalHits;
 
-  private List<Advert> items;
+    private List<Advert> items;
 
-  private List<Link> links;
+    private List<Link> links;
 
-  private SearchQuery searchQuery;
+    private SearchQuery searchQuery;
 
-  /**
+    /**
    *
    */
-  public SearchResult() {
-    super();
-    items = new ArrayList<Advert>();
-  }
+    public SearchResult() {
+        super();
+        items = new ArrayList<Advert>();
+        links = new ArrayList<Link>();
+    }
 
-  /**
-   * @param advert
-   */
-  public void addItem(final Advert advert) {
-    items.add(advert);
-  }
+    /**
+     * @param advert
+     */
+    public void addItem(final Advert advert) {
+        items.add(advert);
+    }
 
-  /**
-   * @return the items
-   */
-  public List<Advert> getItems() {
-    return items;
-  }
+    /**
+     * @return the items
+     */
+    public List<Advert> getItems() {
+        return items;
+    }
 
-  /**
-   * @return the searchQuery
-   */
-  public SearchQuery getSearchQuery() {
-    return searchQuery;
-  }
+    public List<Link> getLinks() {
+        return links;
+    }
 
-  /**
-   * @return the totalHits
-   */
-  public long getTotalHits() {
-    return totalHits;
-  }
+    /**
+     * @return the searchQuery
+     */
+    public SearchQuery getSearchQuery() {
+        return searchQuery;
+    }
 
-  /**
-   * @param items the items to set
-   */
-  public void setItems(final List<Advert> items) {
-    this.items = items;
-  }
+    /**
+     * @return the totalHits
+     */
+    public long getTotalHits() {
+        return totalHits;
+    }
 
-  /**
-   * @param searchQuery the searchQuery to set
-   */
-  public void setSearchQuery(final SearchQuery searchQuery) {
-    this.searchQuery = searchQuery;
-  }
+    /**
+     * @param items the items to set
+     */
+    public void setItems(final List<Advert> items) {
+        this.items = items;
+    }
 
-  /**
-   * @param totalHits the totalHits to set
-   */
-  public void setTotalHits(final long totalHits) {
-    this.totalHits = totalHits;
-  }
+    public void setLinks(final List<Link> links) {
+        this.links = links;
+    }
 
-  public List<Link> getLinks() {
-    return links;
-  }
+    /**
+     * @param searchQuery the searchQuery to set
+     */
+    public void setSearchQuery(final SearchQuery searchQuery) {
+        this.searchQuery = searchQuery;
+    }
 
-  public void setLinks(List<Link> links) {
-    this.links = links;
-  }
-
-  public void buildLinks() {
-    addFirstPageLink();
-    addPreviousLink();
-    addNextLink();
-    addLastPageLink();
-  }
-
-  private void addLastPageLink() {
-    //To change body of created methods use File | Settings | File Templates.
-  }
-
-  private void addNextLink() {
-    //To change body of created methods use File | Settings | File Templates.
-  }
-
-  private void addPreviousLink() {
-    //To change body of created methods use File | Settings | File Templates.
-  }
-
-  private void addFirstPageLink() {
-    //To change body of created methods use File | Settings | File Templates.
-  }
+    /**
+     * @param totalHits the totalHits to set
+     */
+    public void setTotalHits(final long totalHits) {
+        this.totalHits = totalHits;
+    }
 }
